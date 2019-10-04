@@ -1,5 +1,7 @@
 # [parkland.dev](https://parkland.dev/)
 
+# [alternate](https://kindergarten-sight-words-3bf91.appspot.com/)
+
 ## [gcloud](https://gist.github.com/pydevops/cffbd3c694d599c6ca18342d3625af97)
 
 gcloud app deploy
