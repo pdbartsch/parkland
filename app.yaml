@@ -11,3 +11,6 @@ handlers:
     # the entire handlers section) when there are no static files defined.
   - url: /.*
     script: auto
+
+env_variables:
+  GA_TRACKING_ID: UA-149586975-1
