@@ -15,7 +15,7 @@
   <button
     type="button"
     class="btn btn-secondary btn-lg btn-block"
-    value="First Link"
+    value="Current sight words"
     onClick="location.href='{{ url_for('current_words') }}';"
   >
     Current Sight Words
@@ -24,10 +24,19 @@
   <button
     type="button"
     class="btn btn-secondary btn-lg btn-block"
-    value="First Link"
+    value="All sight words"
     onClick="location.href='{{ url_for('all_words') }}';"
   >
     All Sight Words
+  </button>
+
+  <button
+    type="button"
+    class="btn btn-secondary btn-lg btn-block"
+    value="Multiplication quiz"
+    onClick="location.href='{{ url_for('mult_quiz') }}';"
+  >
+    Multiply by 6
   </button>
 
   {% endblock content %}
