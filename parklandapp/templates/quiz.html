@@ -1,0 +1,21 @@
+{% extends 'layout.html' %} {% block subcontent %}
+
+<form id="mult-quiz">
+  <!--action="/result"-->
+  <input type="text" id="answer" name="answer" />
+  <button type="button" id="answer-submit">Submit!</button>
+</form>
+
+<div id="hint"></div>
+
+<script>
+  $('#answer-submit').on('click', function(event) {
+    event.preventDefault();
+    console.log("I'm running!");
+    var url = '/result?' + $('#mult-quiz').serialize();
+    console.log(url);
+    $('#hint').load(url);
+  });
+</script>
+
+{% endblock subcontent %}
