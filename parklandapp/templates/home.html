@@ -1,0 +1,34 @@
+{% extends 'layout.html' %} {% block content %}
+
+<p class="about">
+  Some flash cards and quizzes for my kids.
+</p>
+<p class="about">
+  <!-- <ul>
+  <li><a href="{{ url_for('current_words') }}">Current Sight Words</a></li>    
+  <li><a href="{{ url_for('all_words') }}">All Sight Words</a></li>  
+</ul>
+</p> -->
+</p>
+
+<p class="bp">
+  <button
+    type="button"
+    class="btn btn-secondary btn-lg btn-block"
+    value="First Link"
+    onClick="location.href='{{ url_for('current_words') }}';"
+  >
+    Current Sight Words
+  </button>
+
+  <button
+    type="button"
+    class="btn btn-secondary btn-lg btn-block"
+    value="First Link"
+    onClick="location.href='{{ url_for('all_words') }}';"
+  >
+    All Sight Words
+  </button>
+
+  {% endblock content %}
+</p>
