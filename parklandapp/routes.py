@@ -107,9 +107,22 @@ sws = [
     "out",
 ]
 
+swsc = sws[0:18]
+
 
 @app.route("/")
 def home():
+    return render_template("home.html", heading_text="Welcome to ParkLand!")
+
+
+@app.route("/current_words")
+def current_words():
+    word = random.choice(swsc)
+    return render_template("words.html", heading_text="", word=word)
+
+
+@app.route("/all_words")
+def all_words():
     word = random.choice(sws)
     return render_template("words.html", heading_text="", word=word)
 

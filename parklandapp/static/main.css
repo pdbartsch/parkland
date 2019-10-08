@@ -13,6 +13,12 @@ h6 {
   color: #444444;
 }
 
+ul {
+  color: STEELBLUE;
+  font-size: 18px;
+  font-weight: 400;
+}
+
 .bg-steel {
   background-color: #5f788a;
 }
@@ -93,4 +99,10 @@ a.article-title:hover {
 
 .bp {
   padding: ($spacer * 3) !important;
+}
+
+.about {
+  color: rgb(64, 78, 90);
+  font-size: 18px;
+  font-weight: 200;
 }
