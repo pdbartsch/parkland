@@ -1,7 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import FloatField
-from wtforms.validators import NumberRange
+from wtforms import IntegerField
+from wtforms.validators import NumberRange, DataRequired
 
 
-class MultQuizForm(FlaskForm):
-    product = FloatField("product", validators=[NumberRange(min=1, max=200)])
+class MathQuizForm(FlaskForm):
+    user_answer = IntegerField(
+        "user_answer", validators=[NumberRange(min=1, max=200), DataRequired()]
+    )
