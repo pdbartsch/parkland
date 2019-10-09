@@ -1,0 +1,16 @@
+{% extends 'layout.html' %} {% block subcontent %}
+
+<p class="huge">{{ y }}{{ s }}{{ x }}</p>
+
+<p class="bp">
+  <button
+    type="button"
+    class="btn btn-secondary btn-lg btn-block"
+    value="Refresh Page"
+    onClick="window.location.reload();"
+  >
+    &#8635;
+  </button>
+</p>
+
+{% endblock subcontent %}
