@@ -1,10 +1,12 @@
-from flask import render_template, session
+from flask import render_template, session, request, redirect, url_for
 from parklandapp import app, application
-from parklandapp.forms import MultQuizForm
+from parklandapp.forms import MathQuizForm
 
 # import pbmath
 import pbwords
 import random
+
+current_math_quiz = 7
 
 
 @app.route("/")
@@ -24,45 +26,111 @@ def all_words():
     return render_template("words.html", heading_text="All Words", word=word)
 
 
-@app.route("/mult_quiz")
-def mult_quiz():
+# ///////////////// multiplication quiz
 
-    # set up a new game by setting guess count to 0, and
-    # setting a random number
-    rand_num = random.randint(0, 100)
-    session["rand_num"] = rand_num
-    print("The answer is: ", rand_num)
-    session["count"] = 0
+
+@app.route("/math_quiz_two")
+def math_quiz_two():
+    form = MathQuizForm()
+    number_one = current_math_quiz
+    number_two = random.randrange(1, 10)
+    problem = str(number_one) + " x " + str(number_two)
+    solution = number_one * number_two
+
+    session["solution"] = solution
+    session["problem"] = problem
+
+    return render_template("quiz2.html", problem=problem, solution=solution, form=form)
+
+
+@app.route("/math_quiz_two", methods=["GET", "POST"])
+def math_quiz_two_post():
+    form = MathQuizForm()
+    if form.validate_on_submit():
+        user_answer = request.form["user_answer"]
+        attempt = int(user_answer)
+        problem = session["problem"]
+
+        if attempt == session["solution"]:
+            checked = "Correct"
+            moveon = True
+        else:
+            checked = "Try again"
+            moveon = False
+
+        return render_template(
+            "quiz2.html",
+            problem=problem,
+            attempt=attempt,
+            checked=checked,
+            moveon=moveon,
+            form=form,
+        )
+    else:
+        return redirect(url_for("math_quiz_two"))
+
+
+# ///////////////// division quiz
+
+
+@app.route("/divide")
+def divide():
+    form = MathQuizForm()
+    number_one = current_math_quiz
+    number_two = random.randrange(1, 10) * number_one
+    problem = str(number_two) + " / " + str(number_one)
+    solution = number_two / number_one
+
+    session["solution"] = solution
+    session["problem"] = problem
 
     return render_template(
-        "quiz.html", heading_text="Math Quiz!", instruct_text="What's the answer?:"
+        "quiz_divide.html", problem=problem, solution=solution, form=form
     )
 
 
-@app.route("/result")
-def check_guess():
-    guess = int(request.args.get("guess"))
-    rand_num = session["rand_num"]
+@app.route("/divide", methods=["GET", "POST"])
+def divide_post():
+    form = MathQuizForm()
+    if form.validate_on_submit():
+        user_answer = request.form["user_answer"]
+        attempt = int(user_answer)
+        problem = session["problem"]
 
-    if session["count"] < 10:
-        if guess == rand_num:
-            return render_template(
-                "result.html", response="Hooray! You win.", count=session["count"]
-            )
+        if attempt == session["solution"]:
+            checked = "Correct"
+            moveon = True
         else:
-            print(guess, "!=", rand_num)
-            session["count"] += 1
-            if guess > rand_num:
-                return render_template(
-                    "result.html",
-                    response="Too high. Try again!",
-                    count=session["count"],
-                )
-            elif guess < rand_num:
-                return render_template(
-                    "result.html",
-                    response="Too low. Try again!",
-                    count=session["count"],
-                )
+            checked = "Try again"
+            moveon = False
+
+        return render_template(
+            "quiz_divide.html",
+            problem=problem,
+            attempt=attempt,
+            checked=checked,
+            moveon=moveon,
+            form=form,
+        )
     else:
-        return render_template("result.html", response="You lose.")
+        return redirect(url_for("divide"))
+
+
+# /////////////////math_flash
+@app.route("/math_flash")
+def math_flash():
+    base_number = current_math_quiz
+    factor_number = random.randrange(1, 10)
+    dividend_number = factor_number * base_number
+
+    math_type = random.choice([True, False])
+
+    if math_type:
+        y = str(factor_number)
+        s = " x "
+    else:
+        y = str(dividend_number)
+        s = " / "
+
+    return render_template("math_flashcards.html", x=str(base_number), y=y, s=s)
+
