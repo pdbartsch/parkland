@@ -6,5 +6,5 @@ from wtforms.validators import NumberRange, DataRequired
 
 class MathQuizForm(FlaskForm):
     user_answer = IntegerField(
-        "user_answer", validators=[NumberRange(min=1, max=200), DataRequired()]
+        "user_answer", validators=[NumberRange(min=1, max=1000), DataRequired()]
     )
