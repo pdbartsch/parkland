@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import IntegerField
+from wtforms import Form
+from wtforms_components import IntegerField
 from wtforms.validators import NumberRange, DataRequired
 
 

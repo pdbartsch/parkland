@@ -1,3 +1,4 @@
 Flask==1.0.2
 black
 flask_wtf
+wtforms_components
