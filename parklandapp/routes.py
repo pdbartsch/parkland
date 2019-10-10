@@ -6,7 +6,7 @@ from parklandapp.forms import MathQuizForm
 import pbwords
 import random
 
-current_math_quiz = 6
+current_math_quiz = 7
 
 
 @app.route("/")
