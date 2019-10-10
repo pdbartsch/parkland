@@ -41,7 +41,11 @@ def multiply():
     session["problem"] = problem
 
     return render_template(
-        "quiz_multiply.html", problem=problem, solution=solution, form=form
+        "quiz_multiply.html",
+        problem=problem,
+        solution=solution,
+        form=form,
+        heading_text="Current Multiplication Quiz",
     )
 
 
@@ -67,6 +71,7 @@ def multiply_post():
             checked=checked,
             moveon=moveon,
             form=form,
+            heading_text="Current Multiplication Quiz",
         )
     else:
         return redirect(url_for("multiply"))
@@ -87,7 +92,11 @@ def divide():
     session["problem"] = problem
 
     return render_template(
-        "quiz_divide.html", problem=problem, solution=solution, form=form
+        "quiz_divide.html",
+        problem=problem,
+        solution=solution,
+        form=form,
+        heading_text="Current Division Quiz",
     )
 
 
@@ -113,6 +122,7 @@ def divide_post():
             checked=checked,
             moveon=moveon,
             form=form,
+            heading_text="Current Division Quiz",
         )
     else:
         return redirect(url_for("divide"))
@@ -134,5 +144,11 @@ def math_flash():
         y = str(dividend_number)
         s = " / "
 
-    return render_template("math_flashcards.html", x=str(base_number), y=y, s=s)
+    return render_template(
+        "math_flashcards.html",
+        x=str(base_number),
+        y=y,
+        s=s,
+        heading_text="Current Math Flashcards",
+    )
 

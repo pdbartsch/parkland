@@ -1,12 +1,13 @@
 {% extends 'layout.html' %} {% block subcontent %}
 
-<p class="large">{{ problem }}</p>
+<p class="large">{{ problem }}
 
 <form method="POST">
   {{ form.csrf_token }}
   {{ form.user_answer }}
   <input type="submit" value="Check" />
 </form>
+</p>
 
 {% if moveon %}
 <p class="med">

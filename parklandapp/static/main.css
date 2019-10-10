@@ -19,6 +19,11 @@ ul {
   font-weight: 400;
 }
 
+form {
+  margin: 0 auto;
+  width: 200px;
+}
+
 .bg-steel {
   background-color: #5f788a;
 }
@@ -99,12 +104,14 @@ a.article-title:hover {
 
 
 .large {
+  text-align: center;
   color: STEELBLUE;
   font-size: 30px;
   font-size: 10vw;
 }
 
 .med {
+  text-align: center;
   color: rgb(64, 78, 90);
   font-size: 20px;
   font-size: 2vw;
