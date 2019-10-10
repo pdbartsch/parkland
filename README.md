@@ -4,10 +4,10 @@
 
 ## [gcloud](https://gist.github.com/pydevops/cffbd3c694d599c6ca18342d3625af97)
 
-gcloud app deploy
-gcloud app update
-gcloud app browse
-gcloud auth list
-gcloud config set account `ACCOUNT`
-gcloud projects list
-gcloud config set project `PROJECT NAME`
+- gcloud app deploy
+- gcloud app update
+- gcloud app browse
+- gcloud auth list
+- gcloud config set account `ACCOUNT`
+- gcloud projects list
+- gcloud config set project `PROJECT NAME`
