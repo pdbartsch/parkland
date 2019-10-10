@@ -1,10 +1,6 @@
 import random
 
 
-def display_separator():
-    print("-" * 24)
-
-
 def get_user_solution(problem):
     print("Enter your answer")
     print(problem, end="")
@@ -22,22 +18,15 @@ def check_solution(user_solution, solution, count):
         return count
 
 
-def menu_option(index, count):
+def math_problem(count):
     number_one = 6
     number_two = random.randrange(1, 9)
 
-    if index is 3:
-        problem = str(number_one) + " * " + str(number_two)
-        solution = number_one * number_two
-        user_solution = get_user_solution(problem)
-        count = check_solution(user_solution, solution, count)
-        return count
-    else:
-        problem = str(number_one) + " // " + str(number_two)
-        solution = number_one // number_two
-        user_solution = get_user_solution(problem)
-        count = check_solution(user_solution, solution, count)
-        return count
+    problem = str(number_one) + " * " + str(number_two)
+    solution = number_one * number_two
+    user_solution = get_user_solution(problem)
+    count = check_solution(user_solution, solution, count)
+    return count
 
 
 def display_result(total, correct):
@@ -51,8 +40,6 @@ def display_result(total, correct):
 
 
 def main():
-    display_separator()
-    option = 3
     total = 0
     correct = 0
     while total < 3:

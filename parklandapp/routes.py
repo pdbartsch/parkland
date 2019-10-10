@@ -1,9 +1,9 @@
-from flask import render_template, session
+from flask import render_template
 from parklandapp import app, application
 from parklandapp.forms import MultQuizForm
 
-# import pbmath
 import pbwords
+
 import random
 
 
@@ -24,45 +24,19 @@ def all_words():
     return render_template("words.html", heading_text="All Words", word=word)
 
 
-@app.route("/mult_quiz")
-def mult_quiz():
+@app.route("/math_quiz")
+def math_quiz():
 
-    # set up a new game by setting guess count to 0, and
-    # setting a random number
-    rand_num = random.randint(0, 100)
-    session["rand_num"] = rand_num
-    print("The answer is: ", rand_num)
-    session["count"] = 0
+    number_one = 6
+    # number_two = random.randrange(1, 11)
+    number_two = random.randrange(1, 11) * number_one
+
+    # problem = str(number_one) + " x " + str(number_two)
 
     return render_template(
-        "quiz.html", heading_text="Math Quiz!", instruct_text="What's the answer?:"
+        "quiz.html",
+        heading_text="Division by 6:",
+        instruct_text="",
+        number_one=number_one,
+        number_two=number_two,
     )
-
-
-@app.route("/result")
-def check_guess():
-    guess = int(request.args.get("guess"))
-    rand_num = session["rand_num"]
-
-    if session["count"] < 10:
-        if guess == rand_num:
-            return render_template(
-                "result.html", response="Hooray! You win.", count=session["count"]
-            )
-        else:
-            print(guess, "!=", rand_num)
-            session["count"] += 1
-            if guess > rand_num:
-                return render_template(
-                    "result.html",
-                    response="Too high. Try again!",
-                    count=session["count"],
-                )
-            elif guess < rand_num:
-                return render_template(
-                    "result.html",
-                    response="Too low. Try again!",
-                    count=session["count"],
-                )
-    else:
-        return render_template("result.html", response="You lose.")

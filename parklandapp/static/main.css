@@ -97,6 +97,13 @@ a.article-title:hover {
   font-size: 20vw;
 }
 
+.bignum {
+  text-align: center;
+  color: STEELBLUE;
+  font-size: 30px;
+  font-size: 10vw;
+}
+
 .bp {
   padding: ($spacer * 3) !important;
 }
