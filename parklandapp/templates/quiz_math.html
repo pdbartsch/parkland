@@ -1,0 +1,55 @@
+{% extends 'layout.html' %} {% block subcontent %}
+
+
+<p class="large">
+  {% if math_type %}
+    {{y}} &times; {{x}}
+  {% else %}
+    {{x}} &divide; {{y}}
+  {% endif %}
+
+
+
+<form method="POST">
+  {{ form.csrf_token }}
+  {{ form.user_answer }}
+  <input type="submit" value="Check" />
+</form>
+</p>
+
+
+
+{% if moveon %}
+<p class="med">
+  {{ checked }}! <br />
+  {{ problem }} = {{ attempt }}
+</p>
+
+<p class="bp">
+
+{% if math_type %}
+  <button
+  type="button"
+  class="btn btn-success btn-lg btn-block"
+  value="Refresh Page"
+  onClick="location.href = '{{ url_for('multiply') }}';"
+  >
+  Next
+  </button>
+{% else %}
+  <button
+  type="button"
+  class="btn btn-success btn-lg btn-block"
+  value="Refresh Page"
+  onClick="location.href = '{{ url_for('divide') }}';"
+  >
+  Next
+  </button>
+{% endif %}
+
+</p>
+{% else %} {% if attempt %}
+
+<p class="med">{{ problem }} is not {{ attempt }}. <br />Please try again.</p>
+
+{% endif %}{% endif %} {% endblock subcontent %}

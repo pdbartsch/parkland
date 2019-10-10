@@ -39,13 +39,18 @@ def multiply():
 
     session["solution"] = solution
     session["problem"] = problem
+    session["number_one"] = number_one
+    session["number_two"] = number_two
 
     return render_template(
-        "quiz_multiply.html",
+        "quiz_math.html",
         problem=problem,
         solution=solution,
         form=form,
         heading_text="Current Multiplication Quiz",
+        x=str(number_two),
+        y=str(number_one),
+        math_type=True,
     )
 
 
@@ -56,6 +61,8 @@ def multiply_post():
         user_answer = request.form["user_answer"]
         attempt = int(user_answer)
         problem = session["problem"]
+        number_one = session["number_one"]
+        number_two = session["number_two"]
 
         if attempt == session["solution"]:
             checked = "Correct"
@@ -65,13 +72,16 @@ def multiply_post():
             moveon = False
 
         return render_template(
-            "quiz_multiply.html",
+            "quiz_math.html",
             problem=problem,
             attempt=attempt,
             checked=checked,
             moveon=moveon,
             form=form,
             heading_text="Current Multiplication Quiz",
+            x=str(number_two),
+            y=str(number_one),
+            math_type=True,
         )
     else:
         return redirect(url_for("multiply"))
@@ -90,13 +100,18 @@ def divide():
 
     session["solution"] = solution
     session["problem"] = problem
+    session["number_one"] = number_one
+    session["number_two"] = number_two
 
     return render_template(
-        "quiz_divide.html",
+        "quiz_math.html",
         problem=problem,
         solution=solution,
         form=form,
         heading_text="Current Division Quiz",
+        x=str(number_two),
+        y=str(number_one),
+        math_type=False,
     )
 
 
@@ -107,6 +122,8 @@ def divide_post():
         user_answer = request.form["user_answer"]
         attempt = int(user_answer)
         problem = session["problem"]
+        number_one = session["number_one"]
+        number_two = session["number_two"]
 
         if attempt == session["solution"]:
             checked = "Correct"
@@ -116,13 +133,16 @@ def divide_post():
             moveon = False
 
         return render_template(
-            "quiz_divide.html",
+            "quiz_math.html",
             problem=problem,
             attempt=attempt,
             checked=checked,
             moveon=moveon,
             form=form,
             heading_text="Current Division Quiz",
+            x=str(number_two),
+            y=str(number_one),
+            math_type=False,
         )
     else:
         return redirect(url_for("divide"))
