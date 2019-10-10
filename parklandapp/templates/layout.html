@@ -82,8 +82,12 @@
     <main role="main" class="container">
       <div class="row">
         <div class="col-md-12">
-          <h2 class="font-weight-light">{{ heading_text }}</h2>
-          <h5 class="text-muted font-weight-light">{{ instruct_text }}</h5>
+          <!-- hide on small screens -->
+          <div class="d-none d-md-block">
+            <h2 class="font-weight-light">{{ heading_text }}</h2>
+            <h5 class="text-muted font-weight-light">{{ instruct_text }}</h5>
+          </div>
+
           <h1>
             {% block content %}{% endblock %}
           </h1>
