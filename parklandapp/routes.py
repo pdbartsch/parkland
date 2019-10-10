@@ -26,24 +26,6 @@ def all_words():
     return render_template("words.html", heading_text="All Words", word=word)
 
 
-<<<<<<< HEAD
-@app.route("/math_quiz")
-def math_quiz():
-
-    number_one = 6
-    # number_two = random.randrange(1, 11)
-    number_two = random.randrange(1, 11) * number_one
-
-    # problem = str(number_one) + " x " + str(number_two)
-
-    return render_template(
-        "quiz.html",
-        heading_text="Division by 6:",
-        instruct_text="",
-        number_one=number_one,
-        number_two=number_two,
-    )
-=======
 # ///////////////// multiplication quiz
 
 
@@ -152,4 +134,3 @@ def math_flash():
 
     return render_template("math_flashcards.html", x=str(base_number), y=y, s=s)
 
->>>>>>> devwork
