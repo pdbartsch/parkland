@@ -1,0 +1,31 @@
+{% extends 'layout.html' %} {% block subcontent %}
+
+<p class="large">{{ problem }}</p>
+
+<form method="POST">
+  {{ form.csrf_token }}
+  {{ form.user_answer(size=20) }}
+  <input type="submit" value="Go" />
+</form>
+
+{% if moveon %}
+<p class="about">
+  {{ checked }}! <br />
+  {{ problem }} = {{ attempt }}
+</p>
+
+<p class="bp">
+  <button
+    type="button"
+    class="btn btn-success btn-lg btn-block"
+    value="Refresh Page"
+    onClick="location.href = '{{ url_for('math_quiz_two') }}';"
+  >
+    Next
+  </button>
+</p>
+{% else %} {% if attempt %}
+
+<p class="about">{{ problem }} is not {{ attempt }}. Please try again.</p>
+
+{% endif %}{% endif %} {% endblock subcontent %}

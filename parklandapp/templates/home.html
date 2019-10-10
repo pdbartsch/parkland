@@ -18,7 +18,7 @@
     value="Current sight words"
     onClick="location.href='{{ url_for('current_words') }}';"
   >
-    Current Sight Words
+    Current Sight Words - Flash Cards
   </button>
 
   <button
@@ -27,16 +27,34 @@
     value="All sight words"
     onClick="location.href='{{ url_for('all_words') }}';"
   >
-    All Sight Words
+    All Sight Words - Flash Cards
   </button>
 
   <button
     type="button"
     class="btn btn-secondary btn-lg btn-block"
-    value="Parker's current math quiz"
-    onClick="location.href='{{ url_for('math_quiz') }}';"
+    value="Math quiz multiply"
+    onClick="location.href='{{ url_for('math_quiz_two') }}';"
   >
-    Parker's current math quiz
+    Current multiplication - Quiz
+  </button>
+
+  <button
+    type="button"
+    class="btn btn-secondary btn-lg btn-block"
+    value="Math quiz divide"
+    onClick="location.href='{{ url_for('divide') }}';"
+  >
+    Current division - Quiz
+  </button>
+
+  <button
+    type="button"
+    class="btn btn-secondary btn-lg btn-block"
+    value="Math flash cards"
+    onClick="location.href='{{ url_for('math_flash') }}';"
+  >
+    Current math - Flash Cards
   </button>
 
   {% endblock content %}

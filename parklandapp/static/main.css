@@ -104,6 +104,12 @@ a.article-title:hover {
   font-size: 10vw;
 }
 
+.large {
+  color: STEELBLUE;
+  font-size: 30px;
+  font-size: 5vw;
+}
+
 .bp {
   padding: ($spacer * 3) !important;
 }
