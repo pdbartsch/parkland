@@ -97,17 +97,17 @@ a.article-title:hover {
   font-size: 20vw;
 }
 
-.bignum {
-  text-align: center;
+
+.large {
   color: STEELBLUE;
   font-size: 30px;
   font-size: 10vw;
 }
 
-.large {
-  color: STEELBLUE;
-  font-size: 30px;
-  font-size: 5vw;
+.med {
+  color: rgb(64, 78, 90);
+  font-size: 20px;
+  font-size: 2vw;
 }
 
 .bp {
