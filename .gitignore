@@ -1,5 +1,6 @@
 __pycache__/
 *.pyc 
+parklandapp/__pycache__/*
 
 # Environment
 .env
@@ -7,3 +8,4 @@ env
 venv
 
 .vscode/settings.json
+
