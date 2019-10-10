@@ -9,7 +9,7 @@
 </form>
 
 {% if moveon %}
-<p class="about">
+<p class="med">
   {{ checked }}! <br />
   {{ problem }} = {{ attempt }}
 </p>
@@ -19,13 +19,13 @@
     type="button"
     class="btn btn-success btn-lg btn-block"
     value="Refresh Page"
-    onClick="location.href = '{{ url_for('math_quiz_two') }}';"
+    onClick="location.href = '{{ url_for('multiply') }}';"
   >
     Next
   </button>
 </p>
 {% else %} {% if attempt %}
 
-<p class="about">{{ problem }} is not {{ attempt }}. Please try again.</p>
+<p class="med">{{ problem }} is not {{ attempt }}. <br />Please try again.</p>
 
 {% endif %}{% endif %} {% endblock subcontent %}

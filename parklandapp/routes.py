@@ -29,8 +29,8 @@ def all_words():
 # ///////////////// multiplication quiz
 
 
-@app.route("/math_quiz_two")
-def math_quiz_two():
+@app.route("/multiply")
+def multiply():
     form = MathQuizForm()
     number_one = current_math_quiz
     number_two = random.randrange(1, 10)
@@ -40,11 +40,13 @@ def math_quiz_two():
     session["solution"] = solution
     session["problem"] = problem
 
-    return render_template("quiz2.html", problem=problem, solution=solution, form=form)
+    return render_template(
+        "quiz_multiply.html", problem=problem, solution=solution, form=form
+    )
 
 
-@app.route("/math_quiz_two", methods=["GET", "POST"])
-def math_quiz_two_post():
+@app.route("/multiply", methods=["GET", "POST"])
+def multiply_post():
     form = MathQuizForm()
     if form.validate_on_submit():
         user_answer = request.form["user_answer"]
@@ -59,7 +61,7 @@ def math_quiz_two_post():
             moveon = False
 
         return render_template(
-            "quiz2.html",
+            "quiz_multiply.html",
             problem=problem,
             attempt=attempt,
             checked=checked,
@@ -67,7 +69,7 @@ def math_quiz_two_post():
             form=form,
         )
     else:
-        return redirect(url_for("math_quiz_two"))
+        return redirect(url_for("multiply"))
 
 
 # ///////////////// division quiz

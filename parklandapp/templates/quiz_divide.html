@@ -4,12 +4,12 @@
 
 <form method="POST">
   {{ form.csrf_token }}
-  {{ form.user_answer(size=20) }}
+  {{ form.user_answer }}
   <input type="submit" value="Check" />
 </form>
 
 {% if moveon %}
-<p class="about">
+<p class="med">
   {{ checked }}! <br />
   {{ problem }} = {{ attempt }}
 </p>
@@ -26,6 +26,6 @@
 </p>
 {% else %} {% if attempt %}
 
-<p class="about">{{ problem }} is not {{ attempt }}. Please try again.</p>
+<p class="med">{{ problem }} is not {{ attempt }}. <br />Please try again.</p>
 
 {% endif %}{% endif %} {% endblock subcontent %}
