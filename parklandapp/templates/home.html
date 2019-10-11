@@ -3,59 +3,61 @@
 <p class="about">
   Some flash cards and quizzes for my kids.
 </p>
-<p class="about">
-  <!-- <ul>
-  <li><a href="{{ url_for('current_words') }}">Current Sight Words</a></li>    
-  <li><a href="{{ url_for('all_words') }}">All Sight Words</a></li>  
-</ul>
-</p> -->
-</p>
 
-<p class="bp">
-  <button
-    type="button"
-    class="btn btn-secondary btn-lg btn-block"
-    value="Current sight words"
-    onClick="location.href='{{ url_for('current_words') }}';"
-  >
-    Current Sight Words - Flash Cards
-  </button>
+<div class="row">
+  <div class="col-sm m-1 p-2 bg-nav rounded">
+    Park
+    <p>
+      <button
+        type="button"
+        class="btn btn-secondary btn-lg btn-block"
+        value="Math quiz multiply"
+        onClick="location.href='{{ url_for('multiply') }}';"
+      >
+        Current multiplication - Quiz
+      </button>
 
-  <button
-    type="button"
-    class="btn btn-secondary btn-lg btn-block"
-    value="All sight words"
-    onClick="location.href='{{ url_for('all_words') }}';"
-  >
-    All Sight Words - Flash Cards
-  </button>
+      <button
+        type="button"
+        class="btn btn-secondary btn-lg btn-block"
+        value="Math quiz divide"
+        onClick="location.href='{{ url_for('divide') }}';"
+      >
+        Current division - Quiz
+      </button>
 
-  <button
-    type="button"
-    class="btn btn-secondary btn-lg btn-block"
-    value="Math quiz multiply"
-    onClick="location.href='{{ url_for('multiply') }}';"
-  >
-    Current multiplication - Quiz
-  </button>
+      <button
+        type="button"
+        class="btn btn-secondary btn-lg btn-block"
+        value="Math flash cards"
+        onClick="location.href='{{ url_for('math_flash') }}';"
+      >
+        Current math - Flash Cards
+      </button>
+    </p>
+  </div>
+  <div class="col-sm m-1 p-2 bg-nav rounded">
+    Land
+    <p>
+      <button
+        type="button"
+        class="btn btn-secondary btn-lg btn-block"
+        value="Current sight words"
+        onClick="location.href='{{ url_for('current_words') }}';"
+      >
+        Current Sight Words - Flash Cards
+      </button>
 
-  <button
-    type="button"
-    class="btn btn-secondary btn-lg btn-block"
-    value="Math quiz divide"
-    onClick="location.href='{{ url_for('divide') }}';"
-  >
-    Current division - Quiz
-  </button>
+      <button
+        type="button"
+        class="btn btn-secondary btn-lg btn-block"
+        value="All sight words"
+        onClick="location.href='{{ url_for('all_words') }}';"
+      >
+        All Sight Words - Flash Cards
+      </button>
+    </p>
+  </div>
+</div>
 
-  <button
-    type="button"
-    class="btn btn-secondary btn-lg btn-block"
-    value="Math flash cards"
-    onClick="location.href='{{ url_for('math_flash') }}';"
-  >
-    Current math - Flash Cards
-  </button>
-
-  {% endblock content %}
-</p>
+{% endblock content %}
