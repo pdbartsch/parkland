@@ -18,6 +18,15 @@ def home():
     )
 
 
+@app.route("/about")
+def about():
+    return render_template(
+        "about.html",
+        heading_text="About",
+        instruct_text="Some flash cards and quizzes for my kids.",
+    )
+
+
 @app.route("/current_words")
 def current_words():
     word = random.choice(pbwords.swsc)
