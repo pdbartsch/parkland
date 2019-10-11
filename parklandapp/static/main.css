@@ -28,6 +28,10 @@ form {
   background-color: #5f788a;
 }
 
+.bg-nav {
+  background-color: whitesmoke;
+}
+
 .site-header .navbar-nav .nav-link {
   color: #cbd5db;
 }
