@@ -11,7 +11,11 @@ current_math_quiz = 7
 
 @app.route("/")
 def home():
-    return render_template("home.html", heading_text="Welcome to ParkLand!")
+    return render_template(
+        "home.html",
+        heading_text="Welcome to ParkLand!",
+        instruct_text="Some flash cards and quizzes for my kids.",
+    )
 
 
 @app.route("/current_words")
