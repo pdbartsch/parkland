@@ -23,7 +23,14 @@ def about():
     return render_template(
         "about.html",
         heading_text="About",
-        instruct_text="Some flash cards and quizzes for my kids.",
+        instruct_text="Some flash cards and quizzes ",
+    )
+
+
+@app.route("/", subdomain="pdb")
+def pdb_home():
+    return render_template(
+        "home.html", heading_text="PDB Subdomain", instruct_text="pdb homepage"
     )
 
 
@@ -161,7 +168,7 @@ def divide_post():
         return redirect(url_for("divide"))
 
 
-# /////////////////math_flash
+# ///////////////// all math_flash
 @app.route("/math_flash")
 def math_flash():
     base_number = current_math_quiz
@@ -185,3 +192,52 @@ def math_flash():
         heading_text="Current Math Flashcards",
     )
 
+
+# ///////////////// multiply math_flash
+@app.route("/multiply_flash")
+def multiply_flash():
+    base_number = current_math_quiz
+    factor_number = random.randrange(1, 10)
+    dividend_number = factor_number * base_number
+
+    math_type = True
+
+    if math_type:
+        y = str(factor_number)
+        s = " x "
+    else:
+        y = str(dividend_number)
+        s = " / "
+
+    return render_template(
+        "math_flashcards.html",
+        x=str(base_number),
+        y=y,
+        s=s,
+        heading_text="Current Multiplication Flashcards",
+    )
+
+
+# ///////////////// divide math_flash
+@app.route("/divide_flash")
+def divide_flash():
+    base_number = current_math_quiz
+    factor_number = random.randrange(1, 10)
+    dividend_number = factor_number * base_number
+
+    math_type = False
+
+    if math_type:
+        y = str(factor_number)
+        s = " x "
+    else:
+        y = str(dividend_number)
+        s = " / "
+
+    return render_template(
+        "math_flashcards.html",
+        x=str(base_number),
+        y=y,
+        s=s,
+        heading_text="Current Division Flashcards",
+    )
