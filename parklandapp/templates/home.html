@@ -25,6 +25,24 @@
       <button
         type="button"
         class="btn btn-secondary btn-lg btn-block"
+        value="multiplication flash cards"
+        onClick="location.href='{{ url_for('multiply_flash') }}';"
+      >
+        Current multiplication - Flash Cards
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-secondary btn-lg btn-block"
+        value="Division flash cards"
+        onClick="location.href='{{ url_for('divide_flash') }}';"
+      >
+        Current division - Flash Cards
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-secondary btn-lg btn-block"
         value="Math flash cards"
         onClick="location.href='{{ url_for('math_flash') }}';"
       >
