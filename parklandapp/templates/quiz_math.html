@@ -17,32 +17,26 @@
       <div class="col-sm-12">
   {{ form.user_answer }}
 
-
-{% if moveon %}
-
-  {% if math_type %}
-    <button
-    type="button"
-    class="mt-3 btn btn-success btn-lg btn-block"
-    value="Refresh Page"
-    onClick="location.href = '{{ url_for('multiply') }}';"
-    >
-    Next
-    </button>
+  {% if moveon %}
+  <button
+  type="button"
+  class="mt-3 btn btn-success btn-lg btn-block"
+  value="Refresh Page"
+  {% if url == 'multiply' %}
+  onClick="location.href = '{{ url_for('multiply') }}';"
+  {% elif url == 'multiply_next' %}
+  onClick="location.href = '{{ url_for('multiply_next') }}';"
   {% else %}
-    <button
-    type="button"
-    class="mt-3 btn btn-success btn-lg btn-block"
-    value="Refresh Page"
-    onClick="location.href = '{{ url_for('divide') }}';"
-    >
-    Next
-    </button>
+  onClick="location.href = '{{ url_for('divide') }}';"
+  {% endif %}
+  >
+  Next
+  </button>
+
+  {% else %}
+  <button type="submit" class="mt-3 btn btn-primary btn-lg btn-block">Check</button>
   {% endif %}
 
-{% else %}
-<button type="submit" class="mt-3 btn btn-primary btn-lg btn-block">Check</button>
-{% endif %}
 
 </div>
 </div>
