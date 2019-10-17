@@ -27,7 +27,7 @@ def about():
     )
 
 
-@app.route("/current_words", subdomain="pdb")
+@app.route("/current_words")
 def current_words():
     word = random.choice(pbwords.swsc)
     return render_template("words.html", heading_text="Current Words", word=word)
