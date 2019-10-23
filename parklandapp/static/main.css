@@ -129,4 +129,12 @@ a.article-title:hover {
   color: rgb(64, 78, 90);
   font-size: 18px;
   font-weight: 200;
+  margin-top: 20;
+}
+
+.goal {
+  text-align: center;
+  color: rgb(64, 78, 90);
+  font-size: 18px;
+  font-size: 1vw;
 }

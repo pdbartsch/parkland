@@ -1,0 +1,19 @@
+{% extends 'layout.html' %} {% block content %}
+<div class="goal">
+  <h1 class="med">{{ verbose }}</h1>
+  <p>My resolution for 2019 is to run {{ goal }} miles.</p>
+  <p>
+    Today is day number {{ doy }} which means the year is already
+    {{ percent_year }} over.
+  </p>
+  <p>I'm now at {{ total }} miles in {{ year_minutes }} minutes.</p>
+
+  <p>This month I've run {{ month_miles }} miles.</p>
+</div>
+<div class="shadow p-3 mb-5 bg-white rounded">
+  <p class="about">
+    Built using the Strava API, Google Apps Scripts, Python, and Flask.
+  </p>
+</div>
+
+{% endblock content %}
