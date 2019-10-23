@@ -333,6 +333,7 @@ def run_goal():
     percent_complete = data["values"][18][1]
     percent_year = data["values"][19][1]
     month_miles = data["values"][20][1]
+    month = data["values"][22][1]
 
     return render_template(
         "rungoal.html",
@@ -344,6 +345,7 @@ def run_goal():
         percent_complete=percent_complete,
         month_miles=month_miles,
         percent_year=percent_year,
+        month=month,
         heading_text="Running Goal Check In:",
     )
 
