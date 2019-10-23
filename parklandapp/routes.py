@@ -1,7 +1,8 @@
 from flask import render_template, session, request, redirect, url_for
 from parklandapp import app, application
 from parklandapp.forms import MathQuizForm
-import simplejson as json
+import json
+from instance.config import gkey as gkey
 
 import pbwords
 
@@ -302,3 +303,40 @@ def divide_flash():
         s=s,
         heading_text="Current Division Flashcards",
     )
+
+
+# ///////////////// run goal
+@app.route("/run_goal", methods=["GET", "POST"])
+def run_goal():
+    DATA_SOURCE = (
+        "https://sheets.googleapis.com/v4/spreadsheets/1IhHr7QVjVd1DqYwB34fqJUJjVosllODk2Ofds79-xq8/values/Summary!A1:B22?key="
+        + gkey
+    )
+
+    import urllib.request, json
+
+    with urllib.request.urlopen(DATA_SOURCE) as url:
+        data = json.loads(url.read().decode())
+
+    miles_goal = data["values"][0][1]
+    miles_total = data["values"][1][1]
+    doy = data["values"][3][1]
+    verbose = data["values"][7][1]
+    year_minutes = data["values"][9][1]
+    percent_complete = data["values"][18][1]
+    percent_year = data["values"][19][1]
+    month_miles = data["values"][20][1]
+
+    return render_template(
+        "rungoal.html",
+        goal=miles_goal,
+        total=miles_total,
+        doy=doy,
+        verbose=verbose,
+        year_minutes=year_minutes,
+        percent_complete=percent_complete,
+        month_miles=month_miles,
+        percent_year=percent_year,
+        heading_text="Running Goal Check In:",
+    )
+
