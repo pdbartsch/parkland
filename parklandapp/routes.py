@@ -1,6 +1,7 @@
 from flask import render_template, session, request, redirect, url_for
 from parklandapp import app, application
 from parklandapp.forms import MathQuizForm
+import simplejson as json
 
 import pbwords
 
@@ -185,3 +186,10 @@ def math_flash():
         heading_text="Current Math Flashcards",
     )
 
+
+# /////////////////miles goal
+@app.route("/miles", methods=["GET", "POST"])
+def add_message(uuid):
+    content = request.get_json(silent=True)
+    # print(content) # Do your processing
+    return uuid
