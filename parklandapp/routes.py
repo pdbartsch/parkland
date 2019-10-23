@@ -29,6 +29,13 @@ def about():
     )
 
 
+@app.route("/other")
+def other():
+    return render_template(
+        "other.html", heading_text="Other", instruct_text="Some other stuff "
+    )
+
+
 @app.route("/current_words")
 def current_words():
     word = random.choice(pbwords.swsc)
@@ -309,7 +316,7 @@ def divide_flash():
 @app.route("/run_goal", methods=["GET", "POST"])
 def run_goal():
     DATA_SOURCE = (
-        "https://sheets.googleapis.com/v4/spreadsheets/1IhHr7QVjVd1DqYwB34fqJUJjVosllODk2Ofds79-xq8/values/Summary!A1:B22?key="
+        "https://sheets.googleapis.com/v4/spreadsheets/1IhHr7QVjVd1DqYwB34fqJUJjVosllODk2Ofds79-xq8/values/Summary!A1:B23?key="
         + gkey
     )
 
