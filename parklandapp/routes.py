@@ -3,7 +3,7 @@ from parklandapp import app, application
 from parklandapp.forms import MathQuizForm
 import json
 from instance.config import gkey as gkey
-
+import math
 import pbwords
 
 import random
@@ -341,7 +341,7 @@ def run_goal():
         total=miles_total,
         doy=doy,
         verbose=verbose,
-        year_minutes=year_minutes,
+        year_hours=math.floor(int(year_minutes) / 60),
         percent_complete=percent_complete,
         month_miles=month_miles,
         percent_year=percent_year,
