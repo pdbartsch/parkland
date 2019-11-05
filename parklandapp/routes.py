@@ -8,7 +8,7 @@ import pbwords
 
 import random
 
-current_math_quiz = 7
+current_math_quiz = 8
 
 
 @app.route("/")
