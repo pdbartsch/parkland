@@ -36,9 +36,26 @@ def other():
     )
 
 
-@app.route("/current_words")
+@app.route("/current_words", methods=["GET", "POST"])
 def current_words():
-    word = random.choice(pbwords.swsc)
+    words = random.shuffle(pbwords.swsc)
+    session["words"] = words
+
+    # See if x is in the session
+    counter = session.get("counter", None)
+    if not counter:
+        # If it's not there, set it to 0
+        session["counter"] = 0
+    elif x >= 5:
+        # If it's 20, clear and start over
+        session.clear()
+    else:
+        # If it's there, add 1
+        session["counter"] += 1
+        # Display current count
+
+    word = words[(session["counter"])]
+
     return render_template("words.html", heading_text="Current Words", word=word)
 
 
