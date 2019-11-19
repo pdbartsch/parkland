@@ -8,7 +8,7 @@ import pbwords
 
 import random
 
-current_math_quiz = 8
+current_math_quiz = 9
 
 
 @app.route("/")
@@ -34,6 +34,7 @@ def other():
     return render_template(
         "other.html", heading_text="Other", instruct_text="Some other stuff "
     )
+
 
 @app.route("/current_words")
 def current_words():
