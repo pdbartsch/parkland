@@ -101,4 +101,4 @@ sws = [
     "out",
 ]
 
-swsc = sws[0:30]
+swsc = sws[0:35]
