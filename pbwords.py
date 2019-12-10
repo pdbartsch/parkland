@@ -1,4 +1,15 @@
 sws = [
+    "red",
+    "orange",
+    "green",
+    "yellow",
+    "blue",
+    "purple",
+    "black",
+    "white",
+    "brown",
+    "gray",
+    "pink",
     "I",
     "yes",
     "no",
@@ -101,18 +112,6 @@ sws = [
     "out",
 ]
 
-colors = [
-    "red",
-    "orange",
-    "green",
-    "yellow",
-    "blue",
-    "purple",
-    "black",
-    "white",
-    "brown",
-    "gray",
-    "pink",
-]
+colors = sws[0:11]
 
-swsc = sws[0:35]
+swsc = sws[0:46]
