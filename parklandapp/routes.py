@@ -48,6 +48,12 @@ def all_words():
     return render_template("words.html", heading_text="All Words", word=word)
 
 
+@app.route("/color_words")
+def color_words():
+    word = random.choice(pbwords.colors)
+    return render_template("words.html", heading_text="Colors", word=word)
+
+
 # ///////////////// multiplication quiz
 
 
