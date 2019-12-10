@@ -101,4 +101,18 @@ sws = [
     "out",
 ]
 
+colors = [
+    "red",
+    "orange",
+    "green",
+    "yellow",
+    "blue",
+    "purple",
+    "black",
+    "white",
+    "brown",
+    "gray",
+    "pink",
+]
+
 swsc = sws[0:35]
