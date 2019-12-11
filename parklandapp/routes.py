@@ -54,6 +54,12 @@ def color_words():
     return render_template("words.html", heading_text="Colors", word=word)
 
 
+@app.route("/xtra_practice_words")
+def xtra_practice_words():
+    word = random.choice(pbwords.problems)
+    return render_template("words.html", heading_text="Colors", word=word)
+
+
 # ///////////////// multiplication quiz
 
 
