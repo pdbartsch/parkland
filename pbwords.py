@@ -112,6 +112,21 @@ sws = [
     "out",
 ]
 
+problems = [
+    "then",
+    "there",
+    "and",
+    "pretty",
+    "now",
+    "you",
+    "your",
+    "on",
+    "do",
+    "did",
+    "could",
+    "ate",
+    "came",
+]
 colors = sws[0:11]
 
 swsc = sws[0:46]
