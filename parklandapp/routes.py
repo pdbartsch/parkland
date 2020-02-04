@@ -326,40 +326,40 @@ def divide_flash():
     )
 
 
-# ///////////////// run goal
-@app.route("/run_goal", methods=["GET", "POST"])
-def run_goal():
-    DATA_SOURCE = (
-        "https://sheets.googleapis.com/v4/spreadsheets/1IhHr7QVjVd1DqYwB34fqJUJjVosllODk2Ofds79-xq8/values/Summary!A1:B23?key="
-        + gkey
-    )
+# # ///////////////// run goal
+# @app.route("/run_goal", methods=["GET", "POST"])
+# def run_goal():
+#     DATA_SOURCE = (
+#         "https://sheets.googleapis.com/v4/spreadsheets/1IhHr7QVjVd1DqYwB34fqJUJjVosllODk2Ofds79-xq8/values/Summary!A1:B23?key="
+#         + gkey
+#     )
 
-    import urllib.request, json
+#     import urllib.request, json
 
-    with urllib.request.urlopen(DATA_SOURCE) as url:
-        data = json.loads(url.read().decode())
+#     with urllib.request.urlopen(DATA_SOURCE) as url:
+#         data = json.loads(url.read().decode())
 
-    miles_goal = data["values"][0][1]
-    miles_total = data["values"][1][1]
-    doy = data["values"][3][1]
-    verbose = data["values"][7][1]
-    year_minutes = data["values"][9][1]
-    percent_complete = data["values"][18][1]
-    percent_year = data["values"][19][1]
-    month_miles = data["values"][20][1]
-    month = data["values"][22][1]
+#     miles_goal = data["values"][0][1]
+#     miles_total = data["values"][1][1]
+#     doy = data["values"][3][1]
+#     verbose = data["values"][7][1]
+#     year_minutes = data["values"][9][1]
+#     percent_complete = data["values"][18][1]
+#     percent_year = data["values"][19][1]
+#     month_miles = data["values"][20][1]
+#     month = data["values"][22][1]
 
-    return render_template(
-        "rungoal.html",
-        goal=miles_goal,
-        total=miles_total,
-        doy=doy,
-        verbose=verbose,
-        year_hours=math.floor(int(year_minutes) / 60),
-        percent_complete=percent_complete,
-        month_miles=month_miles,
-        percent_year=percent_year,
-        month=month,
-        heading_text="Running Goal Check In:",
-    )
+#     return render_template(
+#         "rungoal.html",
+#         goal=miles_goal,
+#         total=miles_total,
+#         doy=doy,
+#         verbose=verbose,
+#         year_hours=math.floor(int(year_minutes) / 60),
+#         percent_complete=percent_complete,
+#         month_miles=month_miles,
+#         percent_year=percent_year,
+#         month=month,
+#         heading_text="Running Goal Check In:",
+#     )
 
