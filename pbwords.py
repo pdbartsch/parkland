@@ -115,4 +115,5 @@ sws = [
 problems = ["new", "could", "our", "with", "he", "find", "are", "by", "her"]
 colors = sws[0:11]
 
-swsc = sws[0:56]
+# swsc = sws[0:56]
+swsc = sws
