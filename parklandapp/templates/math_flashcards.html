@@ -1,16 +1,16 @@
-{% extends 'layout.html' %} {% block subcontent %}
+{% extends 'layout.html' %} {% block content %}
 
 <p class="huge">{{ y }}{{ s }}{{ x }}</p>
 
 <p class="bp">
-  <button
-    type="button"
-    class="btn btn-secondary btn-lg btn-block"
-    value="Refresh Page"
-    onClick="window.location.reload();"
-  >
+  <button type="button" class="btn btn-secondary btn-lg btn-block" value="Refresh Page"
+    onClick="window.location.reload();">
     &#8635;
   </button>
+</p>
+
+<p class="bp">
+  <a href="{{ url_for('math_quizzes.index') }}" class="btn btn-outline-secondary btn-lg btn-block">Back to Math Hub</a>
 </p>
 
 <!-- 
@@ -18,7 +18,7 @@
     type="button"
     class="btn btn-secondary btn-lg btn-block"
     value="Refresh Page"
-    onClick="location.href = '{{ url_for('math_flash') }}';"
+    onClick="location.href = '{{ url_for('math_quizzes.math_flash') }}';"
   >
     &#8635;
   </button>
@@ -37,4 +37,4 @@
   </button>
 </p> -->
 
-{% endblock subcontent %}
+{% endblock content %}

@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="content-section">
+    <h1>Games</h1>
+    <p class="lead">Fun and educational games.</p>
+
+    <div class="home-grid">
+        <a href="{{ url_for('games.sum_smash') }}" class="grid-item">
+            <div class="grid-icon">🎮</div>
+            <div class="grid-title">Sum Smash</div>
+            <p>Test your math skills and climb the leaderboard!</p>
+        </a>
+    </div>
+</div>
+{% endblock content %}
