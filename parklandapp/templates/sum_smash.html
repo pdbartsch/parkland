@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sum Smash</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        /* Prevent pull-to-refresh and other touch behaviors on mobile */
+        body {
+            overscroll-behavior: none;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-900 text-white overflow-hidden">
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- Icons Components (Inline SVGs to avoid dependencies) ---
+        const Icon = ({ children, className, onClick }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} onClick={onClick}>
+                {children}
+            </svg>
+        );
+        const TrophyIcon = (props) => <Icon {...props}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" /><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" /><path d="M4 22h16" /><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" /><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" /><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" /></Icon>;
+        const ShuffleIcon = (props) => <Icon {...props}><path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7l14.2-12.6c.8-1.1 1.9-1.7 3.3-1.7H22" /><path d="M2 6h1.4c1.3 0 2.5.6 3.3 1.7l14.2 12.6c.8 1.1 1.9 1.7 3.3 1.7H22" /></Icon>;
+        const PlayIcon = (props) => <Icon {...props}><polygon points="5 3 19 12 5 21 5 3" /></Icon>;
+        const RefreshIcon = (props) => <Icon {...props}><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" /><path d="M16 16h5v5" /></Icon>;
+        const RotateIcon = (props) => <Icon {...props}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></Icon>;
+        const ListIcon = (props) => <Icon {...props}><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></Icon>;
+        const UserIcon = (props) => <Icon {...props}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></Icon>;
+        const MaximizeIcon = (props) => <Icon {...props}><polyline points="15 3 21 3 21 9" /><polyline points="9 21 3 21 3 15" /><line x1="21" y1="3" x2="14" y2="10" /><line x1="3" y1="21" x2="10" y2="14" /></Icon>;
+        const MinimizeIcon = (props) => <Icon {...props}><polyline points="4 14 10 14 10 20" /><polyline points="20 10 14 10 14 4" /><line x1="14" y1="10" x2="21" y2="3" /><line x1="3" y1="21" x2="10" y2="14" /></Icon>;
+
+        // --- Constants & Utils ---
+        const GRID_SIZE = 5;
+        const TILE_VALUES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+        const DIRECTIONS = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+        const TAGLINES = [
+            "Add Fast. Smash Hard.",
+            "Sum it up. Smash it down.",
+            "Connect. Calculate. Clear.",
+            "Ready, Set, Sum.",
+            "The puzzle where every number counts.",
+            "Clear the board, one sum at a time.",
+            "Think fast, sum faster.",
+            "Your number is up.",
+            "The sum of all fun.",
+            "Crunch numbers, crush the board."
+        ];
+
+        const randomValue = () => TILE_VALUES[Math.floor(Math.random() * TILE_VALUES.length)];
+        const createBoard = () => {
+            const board = [];
+            for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+                board.push({ id: `init-${i}-${Date.now()}`, value: randomValue() });
+            }
+            return board;
+        };
+        const isAdjacent = (idx1, idx2) => {
+            const r1 = Math.floor(idx1 / GRID_SIZE), c1 = idx1 % GRID_SIZE;
+            const r2 = Math.floor(idx2 / GRID_SIZE), c2 = idx2 % GRID_SIZE;
+            return Math.abs(r1 - r2) <= 1 && Math.abs(c1 - c2) <= 1;
+        };
+
+        function App() {
+            const [board, setBoard] = useState(createBoard());
+            const [target, setTarget] = useState(15); // Initial target
+            const [selectedIndices, setSelectedIndices] = useState([]);
+            const [isDragging, setIsDragging] = useState(false);
+            const [turns, setTurns] = useState(0);
+            const [shuffles, setShuffles] = useState(3);
+            const [gameState, setGameState] = useState('start'); // start, playing, won, leaderboard
+            const [displayName, setDisplayName] = useState("");
+            const [userUuid, setUserUuid] = useState(null);
+            const [leaderboardData, setLeaderboardData] = useState([]);
+            const [personalBest, setPersonalBest] = useState(null);
+            const [taglineIndex, setTaglineIndex] = useState(0);
+            const [isFullscreen, setIsFullscreen] = useState(false);
+
+            const containerRef = useRef(null);
+            const gridRef = useRef(null);
+
+            // Cycle taglines
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    setTaglineIndex(prev => (prev + 1) % TAGLINES.length);
+                }, 3000);
+                return () => clearInterval(interval);
+            }, []);
+
+            useEffect(() => {
+                // Check for existing user or create new
+                let storedUuid = localStorage.getItem('sumsmash_uuid');
+                let storedName = localStorage.getItem('sumsmash_name');
+
+                if (!storedUuid) {
+                    storedUuid = crypto.randomUUID();
+                    localStorage.setItem('sumsmash_uuid', storedUuid);
+                }
+                setUserUuid(storedUuid);
+
+                if (storedName) {
+                    setDisplayName(storedName);
+                }
+
+                // Load Personal Best
+                fetch(`/api/personal_best?uuid=${storedUuid}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.best_turns) setPersonalBest(data.best_turns);
+                    })
+                    .catch(err => console.error(err));
+            }, []);
+
+            // --- Leaderboard ---
+            const loadLeaderboard = () => {
+                setGameState('leaderboard');
+                fetch('/api/leaderboard')
+                    .then(res => res.json())
+                    .then(data => setLeaderboardData(data))
+                    .catch(err => console.error("Leaderboard error", err));
+            };
+
+            const saveScore = (finalTurns) => {
+                if (!userUuid || !displayName) return;
+
+                fetch('/api/submit_score', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        uuid: userUuid,
+                        name: displayName,
+                        turns: finalTurns
+                    })
+                }).then(() => {
+                    // Update local PB check
+                    if (personalBest === null || finalTurns < personalBest) {
+                        setPersonalBest(finalTurns);
+                    }
+                });
+            };
+
+            // --- Fullscreen ---
+            const toggleFullscreen = () => {
+                if (!document.fullscreenElement) {
+                    containerRef.current.requestFullscreen().then(() => setIsFullscreen(true));
+                } else {
+                    document.exitFullscreen().then(() => setIsFullscreen(false));
+                }
+            };
+
+            useEffect(() => {
+                const handleFsChange = () => setIsFullscreen(!!document.fullscreenElement);
+                document.addEventListener('fullscreenchange', handleFsChange);
+                return () => document.removeEventListener('fullscreenchange', handleFsChange);
+            }, []);
+
+            // --- Game Logic ---
+            const applyGravity = (currentBoard) => {
+                let cols = [];
+                for (let c = 0; c < GRID_SIZE; c++) {
+                    let colTiles = [];
+                    for (let r = 0; r < GRID_SIZE; r++) {
+                        const tile = currentBoard[r * GRID_SIZE + c];
+                        if (tile) colTiles.push(tile);
+                    }
+                    while (colTiles.length < GRID_SIZE) colTiles.unshift(null);
+                    cols.push(colTiles);
+                }
+                let activeCols = cols.filter(col => col.some(tile => tile !== null));
+                const totalActive = activeCols.length;
+                const emptySlots = GRID_SIZE - totalActive;
+                const leftPad = Math.floor(emptySlots / 2);
+                let finalCols = [];
+                for (let i = 0; i < leftPad; i++) finalCols.push(new Array(GRID_SIZE).fill(null));
+                finalCols = [...finalCols, ...activeCols];
+                while (finalCols.length < GRID_SIZE) finalCols.push(new Array(GRID_SIZE).fill(null));
+                const newBoard = [];
+                for (let r = 0; r < GRID_SIZE; r++) {
+                    for (let c = 0; c < GRID_SIZE; c++) {
+                        newBoard.push(finalCols[c][r]);
+                    }
+                }
+                return newBoard;
+            };
+
+            const generateValidTarget = (currentBoard) => {
+                const tileIndices = currentBoard.map((tile, idx) => tile ? idx : -1).filter(idx => idx !== -1);
+                if (tileIndices.length === 0) return 0;
+
+                let attempts = 0;
+                while (attempts < 50) {
+                    const startIdx = tileIndices[Math.floor(Math.random() * tileIndices.length)];
+                    const maxLen = Math.min(5, tileIndices.length);
+                    const pathLength = Math.floor(Math.random() * (maxLen - 1)) + 2;
+                    let currentSum = currentBoard[startIdx].value;
+                    let currentIdx = startIdx;
+                    let visited = [startIdx];
+                    let success = true;
+
+                    for (let i = 1; i < pathLength; i++) {
+                        const r = Math.floor(currentIdx / GRID_SIZE);
+                        const c = currentIdx % GRID_SIZE;
+                        const neighbors = [];
+                        DIRECTIONS.forEach(([dr, dc]) => {
+                            const nr = r + dr;
+                            const nc = c + dc;
+                            if (nr >= 0 && nr < GRID_SIZE && nc >= 0 && nc < GRID_SIZE) {
+                                const nIdx = nr * GRID_SIZE + nc;
+                                if (currentBoard[nIdx] && !visited.includes(nIdx)) neighbors.push(nIdx);
+                            }
+                        });
+                        if (neighbors.length === 0) {
+                            if (visited.length < 2) success = false;
+                            break;
+                        }
+                        const nextIdx = neighbors[Math.floor(Math.random() * neighbors.length)];
+                        currentSum += currentBoard[nextIdx].value;
+                        visited.push(nextIdx);
+                        currentIdx = nextIdx;
+                    }
+                    if (success && currentSum > 0) return currentSum;
+                    attempts++;
+                }
+                return currentBoard[tileIndices[0]].value;
+            };
+
+            // Initialize target on mount
+            useEffect(() => {
+                setTarget(generateValidTarget(board));
+            }, []);
+
+            const handleStart = (index) => {
+                if (gameState !== 'playing') return;
+                setIsDragging(true);
+                setSelectedIndices([index]);
+            };
+
+            const handleMove = (index) => {
+                if (!isDragging || gameState !== 'playing') return;
+                if (selectedIndices.includes(index)) {
+                    // Backtrack
+                    if (selectedIndices.length > 1 && selectedIndices[selectedIndices.length - 2] === index) {
+                        setSelectedIndices(prev => prev.slice(0, -1));
+                    }
+                    return;
+                }
+                const lastIdx = selectedIndices[selectedIndices.length - 1];
+                if (isAdjacent(lastIdx, index)) {
+                    setSelectedIndices([...selectedIndices, index]);
+                }
+            };
+
+            const handleTouchMove = (e) => {
+                if (!isDragging) return;
+                const touch = e.touches[0];
+                const element = document.elementFromPoint(touch.clientX, touch.clientY);
+                if (element && element.dataset.index) handleMove(parseInt(element.dataset.index));
+            };
+
+            const handleEnd = () => {
+                setIsDragging(false);
+                if (selectedIndices.length === 0) return;
+                const currentSum = selectedIndices.reduce((acc, idx) => acc + (board[idx] ? board[idx].value : 0), 0);
+
+                if (currentSum === target) {
+                    setTurns(prev => prev + 1);
+                    let newBoard = [...board];
+                    selectedIndices.forEach(idx => newBoard[idx] = null);
+                    newBoard = applyGravity(newBoard);
+                    setBoard(newBoard);
+                    setSelectedIndices([]);
+
+                    // Check win condition (board empty)
+                    if (newBoard.every(t => t === null)) {
+                        setGameState('won');
+                        saveScore(turns + 1);
+                    } else {
+                        // Generate new target
+                        setTimeout(() => {
+                            const newTarget = generateValidTarget(newBoard);
+                            if (newTarget === 0) {
+                                // No moves left, but board not empty? Shuffle or end? 
+                                // For simplicity, if 0 returned and board not empty, maybe just shuffle automatically or let user shuffle.
+                                // But generateValidTarget returns 0 only if empty.
+                            }
+                            setTarget(newTarget);
+                        }, 200);
+                    }
+
+                } else {
+                    setSelectedIndices([]);
+                }
+            };
+
+            const handleShuffle = () => {
+                if (shuffles > 0 && gameState === 'playing') {
+                    const currentTiles = board.filter(t => t !== null);
+                    if (currentTiles.length === 0) return;
+                    for (let i = currentTiles.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [currentTiles[i], currentTiles[j]] = [currentTiles[j], currentTiles[i]];
+                    }
+                    let tempBoard = new Array(GRID_SIZE * GRID_SIZE).fill(null);
+                    for (let i = 0; i < currentTiles.length; i++) tempBoard[i] = currentTiles[i];
+                    tempBoard = applyGravity(tempBoard);
+                    setBoard(tempBoard);
+                    setShuffles(prev => prev - 1);
+                    setSelectedIndices([]);
+                    setTimeout(() => setTarget(generateValidTarget(tempBoard)), 50);
+                }
+            };
+
+            const startGame = () => {
+                if (!displayName.trim()) {
+                    alert("Please enter a name!");
+                    return;
+                }
+                localStorage.setItem('sumsmash_name', displayName);
+                setTurns(0);
+                setShuffles(3);
+                setBoard(createBoard());
+                setGameState('playing');
+                setTimeout(() => setTarget(generateValidTarget(createBoard())), 50); // Reset target for new board
+            };
+
+            const currentSum = selectedIndices.reduce((acc, idx) => acc + (board[idx] ? board[idx].value : 0), 0);
+            const tilesRemaining = board.filter(t => t !== null).length;
+
+            return (
+                <div ref={containerRef} className="flex flex-col items-center justify-center w-full h-screen relative select-none touch-none">
+
+                    {/* Fullscreen Toggle */}
+                    <div className="absolute top-4 right-4 z-50 flex gap-2">
+                        <button onClick={toggleFullscreen} className="p-2 bg-slate-800/50 rounded-full hover:bg-slate-700 text-slate-400 hover:text-white transition-colors">
+                            {isFullscreen ? <MinimizeIcon /> : <MaximizeIcon />}
+                        </button>
+                    </div>
+
+                    {/* Back to Home */}
+                    <div className="absolute top-4 left-4 z-50">
+                        <a href="/" className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors group no-underline">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-1 transition-transform"><path d="m12 19-7-7 7-7" /><path d="M19 12H5" /></svg>
+                            <span className="font-bold tracking-wider text-xs">PARKLAND</span>
+                        </a>
+                    </div>
+
+                    {/* Header */}
+                    <div className="w-full max-w-md px-6 pt-8 pb-4 flex flex-col items-center z-10">
+                        <div className="flex justify-between w-full items-end mb-4">
+                            <div className="text-slate-400 text-sm font-bold tracking-wider">TURNS <br /> <span className="text-white text-2xl">{turns}</span></div>
+                            <div className="text-slate-400 text-sm font-bold tracking-wider text-right">TILES <br /> <span className="text-white text-2xl">{tilesRemaining}</span></div>
+                        </div>
+                        <div className="relative w-full bg-slate-800 rounded-2xl p-4 text-center shadow-lg border-b-4 border-slate-950 transition-all duration-300">
+                            <div className="text-slate-400 text-xs uppercase tracking-widest mb-1">Target Sum</div>
+                            {gameState === 'won' ? <div className="text-3xl font-black text-green-400">CLEARED!</div> : <div className="text-5xl font-black text-yellow-400 drop-shadow-md">{target || "-"}</div>}
+                        </div>
+                    </div>
+
+                    {/* Game Area */}
+                    <div className="flex-1 flex items-center justify-center w-full max-w-md relative">
+
+                        {/* Start Screen */}
+                        {gameState === 'start' && (
+                            <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-slate-900/95 backdrop-blur-md p-6 text-center">
+                                <h1 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-br from-yellow-400 to-orange-600 mb-2 drop-shadow-lg">SUM<br />SMASH</h1>
+                                <p className="text-slate-400 mb-6 h-6 transition-opacity duration-500">{TAGLINES[taglineIndex]}</p>
+                                <div className="w-full max-w-xs mb-6">
+                                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 block">Player Name</label>
+                                    <input type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)} className="w-full bg-slate-800 border-2 border-slate-700 rounded-lg px-4 py-3 text-center font-bold text-lg focus:border-blue-500 outline-none transition-colors text-white placeholder-slate-600" placeholder="Enter Name" />
+                                </div>
+                                <button onClick={startGame} className="flex items-center gap-3 px-10 py-4 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white rounded-full font-bold text-xl shadow-xl transition-all transform hover:scale-105 active:scale-95 mb-4 w-full justify-center max-w-xs">
+                                    <PlayIcon /> PLAY NOW
+                                </button>
+                                <button onClick={loadLeaderboard} className="flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-full font-bold text-sm transition-colors">
+                                    <TrophyIcon /> LEADERBOARD
+                                </button>
+                            </div>
+                        )}
+
+                        {/* Leaderboard */}
+                        {gameState === 'leaderboard' && (
+                            <div className="absolute inset-0 z-40 flex flex-col items-center bg-slate-900 p-6 w-full h-full">
+                                <div className="flex items-center gap-2 mb-6 mt-4">
+                                    <TrophyIcon className="text-yellow-400" />
+                                    <h2 className="text-3xl font-black text-white">TOP RUNS</h2>
+                                </div>
+                                <div className="w-full max-w-sm bg-slate-800 rounded-xl overflow-hidden flex-1 mb-6 shadow-2xl border border-slate-700 flex flex-col">
+                                    <div className="bg-slate-950/50 p-3 grid grid-cols-4 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                                        <div className="col-span-1 text-center">Rank</div>
+                                        <div className="col-span-2">Player</div>
+                                        <div className="col-span-1 text-right">Turns</div>
+                                    </div>
+                                    <div className="overflow-y-auto flex-1">
+                                        {leaderboardData.length === 0 ? <div className="p-8 text-center text-slate-500">No scores yet!</div> :
+                                            leaderboardData.map((entry, i) => (
+                                                <div key={i} className={`grid grid-cols-4 p-3 border-b border-slate-700/50 text-slate-300`}>
+                                                    <div className="col-span-1 text-center font-bold text-slate-500">#{i + 1}</div>
+                                                    <div className="col-span-2 font-medium truncate">{entry.display_name}</div>
+                                                    <div className="col-span-1 text-right font-mono font-bold text-yellow-500">{entry.turns}</div>
+                                                </div>
+                                            ))
+                                        }
+                                    </div>
+                                </div>
+                                <div className="w-full max-w-sm bg-slate-800/50 rounded-lg p-4 mb-6 flex justify-between items-center border border-slate-700">
+                                    <div className="flex items-center gap-2 text-slate-400"><UserIcon size={16} /><span className="text-sm font-bold">YOUR BEST</span></div>
+                                    <div className="text-xl font-bold text-white">{personalBest !== null ? personalBest : '--'} <span className="text-xs text-slate-500 font-normal ml-1">TURNS</span></div>
+                                </div>
+                                <button onClick={() => setGameState('start')} className="px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-full font-bold text-sm transition-colors">BACK TO MENU</button>
+                            </div>
+                        )}
+
+                        {/* Win Screen */}
+                        {gameState === 'won' && (
+                            <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-slate-900/95 backdrop-blur-sm p-6 text-center">
+                                <TrophyIcon className="text-yellow-400 mb-4 w-16 h-16 animate-bounce" />
+                                <h2 className="text-5xl font-black text-white mb-2">COMPLETE!</h2>
+                                <p className="text-2xl text-slate-300 mb-8">Finished in <span className="text-white font-bold text-4xl mx-1 text-blue-400">{turns}</span> turns</p>
+                                <div className="flex flex-col w-full max-w-xs gap-3">
+                                    <button onClick={startGame} className="flex items-center justify-center gap-2 w-full px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-bold text-xl shadow-xl transition-all"><RotateIcon /> PLAY AGAIN</button>
+                                    <button onClick={loadLeaderboard} className="flex items-center justify-center gap-2 w-full px-8 py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-full font-bold text-xl shadow-xl transition-all"><ListIcon /> LEADERBOARD</button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Floating Sum */}
+                        {isDragging && (
+                            <div className={`absolute -top-12 left-1/2 transform -translate-x-1/2 px-6 py-2 rounded-full font-bold text-xl shadow-xl z-20 transition-colors duration-200 ${currentSum === target ? 'bg-green-500 text-white scale-110' : currentSum > target ? 'bg-red-500 text-white' : 'bg-slate-700 text-white'}`}>
+                                Sum: {currentSum}
+                            </div>
+                        )}
+
+                        {/* Grid */}
+                        <div ref={gridRef} className="grid grid-cols-5 gap-2 p-4 bg-slate-800/50 rounded-xl shadow-inner touch-none min-h-[300px]" onMouseLeave={handleEnd} onMouseUp={handleEnd} onTouchEnd={handleEnd}>
+                            {board.map((tile, index) => {
+                                const isSelected = selectedIndices.includes(index);
+                                if (!tile) return <div key={`empty-${index}`} className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg bg-transparent" />;
+                                let bgClass = "bg-slate-700";
+                                if (isSelected) bgClass = "bg-blue-500";
+                                if (isSelected && currentSum === target) bgClass = "bg-green-500 animate-pulse";
+                                if (isSelected && currentSum > target) bgClass = "bg-red-500";
+                                return (
+                                    <div key={tile.id} data-index={index} onMouseDown={() => handleStart(index)} onMouseEnter={() => handleMove(index)} onTouchStart={() => handleStart(index)} onTouchMove={handleTouchMove}
+                                        className={`w-14 h-14 sm:w-16 sm:h-16 rounded-lg flex items-center justify-center text-3xl font-bold cursor-pointer select-none transition-all duration-300 transform ${bgClass} ${isSelected ? 'scale-95 shadow-inner' : 'shadow-lg border-b-4 border-slate-900 hover:-translate-y-0.5'}`}>
+                                        {tile.value}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="w-full max-w-md px-6 py-8 flex justify-around">
+                        <button onClick={handleShuffle} disabled={shuffles <= 0 || gameState !== 'playing'} className="flex flex-col items-center gap-1 text-slate-400 hover:text-white disabled:opacity-30 disabled:hover:text-slate-400 transition-colors">
+                            <div className="p-4 bg-slate-800 rounded-full shadow-lg relative">
+                                <ShuffleIcon />
+                                <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center border-2 border-slate-900">{shuffles}</span>
+                            </div>
+                            <span className="text-xs font-bold">SHUFFLE</span>
+                        </button>
+                        <button onClick={() => setGameState('start')} className="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition-colors">
+                            <div className="p-4 bg-slate-800 rounded-full shadow-lg"><RefreshIcon /></div>
+                            <span className="text-xs font-bold">RESET</span>
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>

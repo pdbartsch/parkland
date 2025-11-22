@@ -1,15 +1,11 @@
-runtime: python37
+runtime: python311
+entrypoint: gunicorn -b :$PORT run:app
 
 handlers:
-  # This configures Google App Engine to serve the files in the app's static
-  # directory.
-  - url: /parklandapp/static
-    static_dir: static
+  # Serve static files from the parklandapp/static directory
+  - url: /static
+    static_dir: parklandapp/static
 
-    # This handler routes all requests not caught above to your main app. It is
-    # required when static routes are defined, but can be omitted (along with
-    # the entire handlers section) when there are no static files defined.
+  # Route all other requests to the application
   - url: /.*
     script: auto
-# env_variables:
-#   GA_TRACKING_ID: UA-149586975-1
