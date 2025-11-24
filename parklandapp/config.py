@@ -28,4 +28,4 @@ class Config:
     
     # Security: Allowlist
     # TODO: Add your allowed emails here
-    ALLOWED_USERS = ["redacted@example.com", "redacted@example.com", "redacted@example.com", "redacted@example.com"]
+    ALLOWED_USERS = ["redacted@example.com", "redacted@example.com", "redacted@example.com", "redacted@example.com", "redacted@example.com", "redacted@example.com", "redacted@example.com"]
