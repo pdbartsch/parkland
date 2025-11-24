@@ -28,4 +28,4 @@ class Config:
     
     # Security: Allowlist
     # TODO: Add your allowed emails here
-    ALLOWED_USERS = ["pdbartsch@gmail.com", "parker.bartsch@gmail.com", "landon.bartsch@gmail.com", "alison.bartsch@gmail.com"]
+    ALLOWED_USERS = ["pdbartsch@gmail.com", "parker.bartsch@gmail.com", "landon.bartsch@gmail.com", "alison.bartsch@gmail.com", "osospdb@gmail.com", "pdbar@ucsb.edu", "paul@smvos.org"]
