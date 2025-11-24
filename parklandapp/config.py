@@ -21,3 +21,11 @@ class Config:
         )
 
         SQLALCHEMY_DATABASE_URI = CONN_DB
+
+    # Google OAuth Configuration
+    GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID")
+    GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET")
+    
+    # Security: Allowlist
+    # TODO: Add your allowed emails here
+    ALLOWED_USERS = ["pdbartsch@gmail.com", "parker.bartsch@gmail.com", "landon.bartsch@gmail.com", "alison.bartsch@gmail.com"]

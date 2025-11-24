@@ -6,7 +6,9 @@ parklandapp/__pycache__/*
 .env
 env
 venv
+app.yaml
 
 .vscode/settings.json
 
 instance/
+app.yaml
