@@ -13,6 +13,7 @@
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
 
   <!-- Favicon -->
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
   <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
   <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
   <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
@@ -51,6 +52,23 @@
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('visualizations.index') }}">Visualizations</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('box2box.index') }}">Box2Box</a>
+            </li>
+            {% if session.get('user') %}
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout ({{ session.get('user').get('email') }})</a>
+              </li>
+            {% else %}
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+              </li>
+              {% if config['DEBUG'] %}
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('auth.login_dev') }}">Dev Login</a>
+              </li>
+              {% endif %}
+            {% endif %}
           </ul>
         </div>
       </div>

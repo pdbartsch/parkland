@@ -1,6 +1,7 @@
 {% extends 'layout.html' %} {% block content %}
 
 
+<h2>{{ heading_text }}</h2>
 <p class="large">
   {% if math_type %}
   {{y}} &times; {{x}}
@@ -18,8 +19,8 @@
       {{ form.user_answer }}
 
       {% if moveon %}
-      <button type="button" class="mt-3 btn btn-success btn-lg btn-block" value="Refresh Page" {% if url=='multiply' %}
-        onClick="location.href = '{{ url_for('math_quizzes.multiply') }}';" {% elif url=='multiply_next' %}
+      <button type="button" class="mt-3 btn btn-success btn-lg btn-block" value="Refresh Page" {% if url=='math_quizzes.multiply' %}
+        onClick="location.href = '{{ url_for('math_quizzes.multiply') }}';" {% elif url=='math_quizzes.multiply_next' %}
         onClick="location.href = '{{ url_for('math_quizzes.multiply_next') }}';" {% else %}
         onClick="location.href = '{{ url_for('math_quizzes.divide') }}';" {% endif %}>
         Next
