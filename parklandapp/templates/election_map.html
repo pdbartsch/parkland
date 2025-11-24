@@ -146,6 +146,113 @@
             transform-style: preserve-3d;
         }
 
+        /* Mobile Responsive Scaling */
+        @media (max-width: 850px) {
+            .map-grid {
+                transform: scale(0.8);
+                transform-origin: center top;
+                margin-top: 1rem;
+            }
+
+            /* Hide Desktop Controls on Mobile */
+            .controls-panel {
+                display: none !important;
+            }
+
+            /* Mobile Header Styles */
+            #mobile-header {
+                pointer-events: auto;
+                background: rgba(15, 23, 42, 0.95);
+                backdrop-filter: blur(10px);
+                border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+                padding: 1rem;
+                transition: all 0.3s ease;
+                max-height: 100vh;
+                overflow: hidden;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                z-index: 50;
+                cursor: pointer;
+            }
+
+            #mobile-header.collapsed {
+                max-height: 80px; /* Approx height for just title */
+            }
+
+            #mobile-header.collapsed .header-content {
+                opacity: 0;
+                pointer-events: none;
+            }
+            
+            #mobile-header .header-content {
+                transition: opacity 0.3s ease;
+                opacity: 1;
+            }
+
+            /* Mobile Summary Styles */
+            #mobile-summary-trigger {
+                display: flex !important;
+            }
+
+            #summary-container {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                max-height: 80vh;
+                transform: translateY(100%);
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                border-radius: 1.5rem 1.5rem 0 0;
+                border: 1px solid rgba(51, 65, 85, 0.5);
+                border-bottom: none;
+                z-index: 60;
+            }
+
+            #summary-container.open {
+                transform: translateY(0);
+            }
+
+            /* Adjust Legend for Mobile Header */
+            .desktop-legend {
+                display: none;
+            }
+        }
+
+        @media (min-width: 851px) {
+            #mobile-header {
+                pointer-events: none; /* Let clicks pass through on desktop */
+                background: transparent;
+                border: none;
+                padding: 1.5rem;
+            }
+            
+            #mobile-summary-trigger {
+                display: none !important;
+            }
+            
+            .mobile-only-legend {
+                display: none;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .map-grid {
+                transform: scale(0.6);
+                transform-origin: center top;
+                margin-top: 6rem; /* More space for header */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .map-grid {
+                transform: scale(0.45);
+                transform-origin: center top;
+                margin-top: 5rem;
+            }
+        }
+
         /* Individual State Cell */
         .state-cell {
             position: relative;
@@ -1265,69 +1372,86 @@
 </head>
 
 <body class="h-screen w-screen flex flex-col overflow-hidden">
-    <!-- Header / Title -->
-    <header class="absolute top-0 left-0 w-full p-6 z-40 flex justify-between items-start pointer-events-none">
-        <div class="pointer-events-auto max-w-lg">
-            <!-- Back Button -->
-            <a href="{{ url_for('main.home') }}"
-                class="flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-4 group">
-                <span
-                    class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
-                <span class="font-bold tracking-wider text-sm">PARKLAND</span>
-            </a>
-
-            <h1
-                class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-rose-400 mb-2">
-                The Geometry of Representation
-            </h1>
-            <p class="text-slate-300 text-sm leading-relaxed mb-2">
-                Interactive 3D visualization of the <strong>2024 US Presidential Election</strong>.
-                <br>Height = <span class="text-yellow-400 font-semibold">Electoral Votes (EVs) per 1M Residents</span>.
-            </p>
-            <div class="text-[10px] text-slate-400 italic">
-                *EVs = Electoral Votes
-            </div>
+    <!-- Header / Title (Collapsible on Mobile) -->
+    <header id="mobile-header" class="absolute top-0 left-0 w-full z-40 flex flex-col items-start transition-all duration-300" onclick="toggleHeader()">
+        <!-- Mobile Toggle Indicator (Visible only on mobile) -->
+        <div class="w-full flex justify-center pb-2 md:hidden">
+            <div class="w-12 h-1 bg-slate-600 rounded-full"></div>
         </div>
 
-        <!-- Controls (Starts Minimized) -->
-        <div class="pointer-events-auto controls-panel bg-slate-800/80 border border-slate-700/50 rounded-xl shadow-2xl w-64 collapsed-controls"
-            id="controls-container">
-            <!-- Header / Toggle -->
-            <div class="flex items-center justify-between p-4 cursor-pointer hover:bg-white/5 transition-colors h-[56px]"
-                onclick="toggleControls()">
-                <span class="font-bold text-sm text-white flex items-center gap-2">
-                    <span class="material-symbols-outlined text-base">tune</span> View Controls
-                </span>
-                <span class="material-symbols-outlined text-slate-400 transition-transform"
-                    id="controls-icon">expand_more</span>
+        <div class="header-content w-full flex justify-between items-start pointer-events-none md:pointer-events-auto">
+            <div class="pointer-events-auto max-w-lg">
+                <!-- Back Button -->
+                <a href="{{ url_for('main.home') }}"
+                    class="flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-4 group">
+                    <span
+                        class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                    <span class="font-bold tracking-wider text-sm">PARKLAND</span>
+                </a>
+
+                <h1
+                    class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-rose-400 mb-2">
+                    The Geometry of Representation
+                </h1>
+                <p class="text-slate-300 text-sm leading-relaxed mb-2">
+                    Interactive 3D visualization of the <strong>2024 US Presidential Election</strong>.
+                    <br>Height = <span class="text-yellow-400 font-semibold">Electoral Votes (EVs) per 1M Residents</span>.
+                </p>
+                <div class="text-[10px] text-slate-400 italic mb-4">
+                    *EVs = Electoral Votes
+                </div>
+
+                <!-- Mobile Legend (Inside Header) -->
+                <div class="mobile-only-legend md:hidden mb-2">
+                    <div class="text-xs font-semibold text-slate-300 mb-1">Power Gradient</div>
+                    <div class="h-2 w-full max-w-[200px] rounded-full gradient-legend mb-1"></div>
+                    <div class="flex justify-between text-[10px] text-slate-500 font-mono w-full max-w-[200px]">
+                        <span>Low Power</span>
+                        <span>High Power</span>
+                    </div>
+                </div>
             </div>
-            <!-- Collapsible Content -->
-            <div class="px-4 pb-4 flex flex-col gap-4">
-                <div>
-                    <label class="flex justify-between text-xs font-semibold text-slate-400 mb-2">
-                        <span>Rotation (Y-Axis)</span>
-                        <span class="material-symbols-outlined text-sm">360</span>
-                    </label>
-                    <input type="range" id="rot-z" min="0" max="360" value="0" class="w-full">
+
+            <!-- Controls (Desktop Only) -->
+            <div class="pointer-events-auto controls-panel bg-slate-800/80 border border-slate-700/50 rounded-xl shadow-2xl w-64 collapsed-controls"
+                id="controls-container" onclick="event.stopPropagation()">
+                <!-- Header / Toggle -->
+                <div class="flex items-center justify-between p-4 cursor-pointer hover:bg-white/5 transition-colors h-[56px]"
+                    onclick="toggleControls()">
+                    <span class="font-bold text-sm text-white flex items-center gap-2">
+                        <span class="material-symbols-outlined text-base">tune</span> View Controls
+                    </span>
+                    <span class="material-symbols-outlined text-slate-400 transition-transform"
+                        id="controls-icon">expand_more</span>
                 </div>
-                <div>
-                    <label class="flex justify-between text-xs font-semibold text-slate-400 mb-2">
-                        <span>Tilt (X-Axis)</span>
-                        <span class="material-symbols-outlined text-sm">explore</span>
-                    </label>
-                    <input type="range" id="rot-x" min="0" max="85" value="55" class="w-full">
+                <!-- Collapsible Content -->
+                <div class="px-4 pb-4 flex flex-col gap-4">
+                    <div>
+                        <label class="flex justify-between text-xs font-semibold text-slate-400 mb-2">
+                            <span>Rotation (Y-Axis)</span>
+                            <span class="material-symbols-outlined text-sm">360</span>
+                        </label>
+                        <input type="range" id="rot-z" min="0" max="360" value="0" class="w-full">
+                    </div>
+                    <div>
+                        <label class="flex justify-between text-xs font-semibold text-slate-400 mb-2">
+                            <span>Tilt (X-Axis)</span>
+                            <span class="material-symbols-outlined text-sm">explore</span>
+                        </label>
+                        <input type="range" id="rot-x" min="0" max="85" value="55" class="w-full">
+                    </div>
+                    <button id="reset-view"
+                        class="mt-2 bg-slate-700 hover:bg-slate-600 text-xs font-bold py-2 px-4 rounded border border-slate-600 transition-colors flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-sm">restart_alt</span> Reset View
+                    </button>
                 </div>
-                <button id="reset-view"
-                    class="mt-2 bg-slate-700 hover:bg-slate-600 text-xs font-bold py-2 px-4 rounded border border-slate-600 transition-colors flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-sm">restart_alt</span> Reset View
-                </button>
             </div>
         </div>
     </header>
 
-    <!-- Legend (Bottom Left) -->
+    <!-- Legend (Bottom Left - Desktop Only) -->
     <div
-        class="absolute bottom-6 left-6 z-40 pointer-events-auto bg-slate-900/80 border border-slate-700 rounded-xl p-4 backdrop-blur-sm w-56">
+        class="desktop-legend absolute bottom-6 left-6 z-40 pointer-events-auto bg-slate-900/80 border border-slate-700 rounded-xl p-4 backdrop-blur-sm w-56">
         <div class="text-xs font-semibold text-slate-300 mb-2">Power Gradient (EVs/1M Pop)</div>
         <div class="h-3 w-full rounded-full gradient-legend mb-1"></div>
         <div class="flex justify-between text-[10px] text-slate-500 font-mono">
@@ -1336,9 +1460,19 @@
         </div>
     </div>
 
-    <!-- Summary Table (Bottom Right) -->
-    <div class="absolute bottom-6 right-6 z-40 pointer-events-auto">
-        <div class="bg-slate-900/95 border border-slate-700 rounded-xl p-5 shadow-2xl backdrop-blur-lg">
+    <!-- Mobile Summary Trigger Button -->
+    <button id="mobile-summary-trigger" onclick="toggleSummary()" class="fixed bottom-6 right-6 z-50 bg-blue-600 hover:bg-blue-500 text-white rounded-full p-4 shadow-2xl flex items-center justify-center transition-transform hover:scale-105 active:scale-95 hidden">
+        <span class="material-symbols-outlined text-2xl">leaderboard</span>
+    </button>
+
+    <!-- Summary Table (Bottom Right Desktop / Bottom Sheet Mobile) -->
+    <div id="summary-container" class="absolute bottom-6 right-6 z-40 pointer-events-auto">
+        <div class="bg-slate-900/95 border border-slate-700 rounded-xl p-5 shadow-2xl backdrop-blur-lg h-full overflow-y-auto">
+            <!-- Mobile Close Handle -->
+            <div class="w-full flex justify-center pb-4 md:hidden" onclick="toggleSummary()">
+                <div class="w-12 h-1 bg-slate-600 rounded-full"></div>
+            </div>
+
             <h3 class="text-sm font-bold text-white mb-3 border-b border-slate-700 pb-2 flex items-center gap-2">
                 <span class="material-symbols-outlined text-base text-yellow-400">leaderboard</span>
                 Election Efficiency Summary
@@ -2385,6 +2519,28 @@ if __name__ == '__main__':
     </script>
 
 
+    <script>
+        // Mobile Header Toggle
+        function toggleHeader() {
+            if (window.innerWidth > 850) return; // Only for mobile
+            const header = document.getElementById('mobile-header');
+            header.classList.toggle('collapsed');
+        }
+
+        // Mobile Summary Toggle
+        function toggleSummary() {
+            const container = document.getElementById('summary-container');
+            container.classList.toggle('open');
+        }
+
+        // Initialize Header as Collapsed on Mobile
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.innerWidth <= 850) {
+                const header = document.getElementById('mobile-header');
+                if (header) header.classList.add('collapsed');
+            }
+        });
+    </script>
 </body>
 
 </html>
