@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Census Game - ParkLand</title>
+    <link rel="shortcut icon" href="static/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="static/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="static/favicon-16x16.png">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header */
+        header {
+            background: #1e293b;
+            border-bottom: 2px solid #334155;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-link {
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: #fff; }
+
+        .game-title {
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #38bdf8, #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .stat {
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+        .stat-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: #fff;
+        }
+        .stat-value.tier { color: #38bdf8; }
+        .stat-value.score { color: #34d399; }
+        .stat-value.lifetime { color: #fbbf24; }
+
+        /* Main game area */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #map {
+            flex: 1;
+            z-index: 1;
+        }
+
+        /* Question panel */
+        #question-panel {
+            background: #1e293b;
+            border-top: 2px solid #334155;
+            padding: 16px 24px;
+            flex-shrink: 0;
+            z-index: 1000;
+        }
+
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .tier-badge {
+            background: #0ea5e9;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 12px;
+            letter-spacing: 0.05em;
+        }
+
+        .metric-name {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        #question-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 6px;
+        }
+
+        #hint-text {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        /* Overlays */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .overlay.hidden { display: none; }
+
+        .overlay-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            max-width: 460px;
+            width: 90%;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        .overlay-card h2 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .overlay-card p {
+            color: #94a3b8;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: #0ea5e9;
+            color: #fff;
+        }
+        .btn-primary:hover { background: #0284c7; transform: scale(1.02); }
+
+        .btn-success {
+            background: #10b981;
+            color: #fff;
+        }
+        .btn-success:hover { background: #059669; }
+
+        .btn-secondary {
+            background: #334155;
+            color: #e2e8f0;
+        }
+        .btn-secondary:hover { background: #475569; }
+
+        .btn-danger {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        /* Feedback overlay (temporary) */
+        #feedback-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3000;
+            pointer-events: none;
+        }
+
+        .feedback-msg {
+            padding: 20px 40px;
+            border-radius: 16px;
+            font-size: 22px;
+            font-weight: 800;
+            animation: feedbackPop 0.3s ease-out;
+            white-space: nowrap;
+        }
+
+        .feedback-correct {
+            background: #059669;
+            color: #fff;
+            box-shadow: 0 0 40px rgba(16, 185, 129, 0.4);
+        }
+
+        .feedback-wrong {
+            background: #dc2626;
+            color: #fff;
+            box-shadow: 0 0 40px rgba(239, 68, 68, 0.4);
+        }
+
+        @keyframes feedbackPop {
+            0% { transform: scale(0.7); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Slider challenge */
+        .slider-container {
+            margin: 24px 0;
+        }
+
+        .slider-question {
+            font-size: 16px;
+            color: #e2e8f0;
+            margin-bottom: 16px;
+        }
+
+        .slider-wrapper {
+            position: relative;
+            padding: 0 8px;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #334155;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #0ea5e9;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 8px;
+        }
+
+        .slider-value-display {
+            font-size: 36px;
+            font-weight: 800;
+            color: #38bdf8;
+            margin: 12px 0;
+        }
+
+        /* County tooltip */
+        .county-tooltip {
+            background: #1e293b !important;
+            border: 1px solid #475569 !important;
+            border-radius: 8px !important;
+            padding: 10px 14px !important;
+            color: #e2e8f0 !important;
+            font-family: 'Segoe UI', system-ui, sans-serif !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4) !important;
+        }
+        .county-tooltip .county-name {
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+        .county-tooltip .county-stat {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        .county-tooltip .county-stat span {
+            color: #38bdf8;
+            font-weight: 600;
+        }
+
+        /* Start screen specific */
+        .rules-list {
+            text-align: left;
+            margin: 20px 0;
+            padding-left: 20px;
+        }
+        .rules-list li {
+            color: #94a3b8;
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .rules-list li strong {
+            color: #e2e8f0;
+        }
+
+        /* Game over score */
+        .final-score {
+            font-size: 48px;
+            font-weight: 800;
+            color: #fbbf24;
+            margin: 8px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            header { padding: 8px 12px; }
+            .game-title { font-size: 16px; }
+            .stats-bar { gap: 12px; }
+            .stat-value { font-size: 18px; }
+            #question-panel { padding: 12px 16px; }
+            #question-text { font-size: 15px; }
+            .overlay-card { padding: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-left">
+        <a href="/" class="back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+            PARKLAND
+        </a>
+        <div class="game-title">Census Game</div>
+    </div>
+    <div class="stats-bar">
+        <div class="stat">
+            <div class="stat-label">Tier</div>
+            <div class="stat-value tier" id="tier-display">1</div>
+        </div>
+        <div class="stat">
+            <div class="stat-label">Score</div>
+            <div class="stat-value score" id="score-display">0</div>
+        </div>
+        <div class="stat">
+            <div class="stat-label">Best</div>
+            <div class="stat-value lifetime" id="lifetime-display">0</div>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div id="map"></div>
+    <section id="question-panel">
+        <div class="question-meta">
+            <span class="tier-badge" id="tier-badge">TIER 1</span>
+            <span class="metric-name" id="metric-name"></span>
+        </div>
+        <div id="question-text">Loading...</div>
+        <div id="hint-text"></div>
+    </section>
+</main>
+
+<div id="feedback-overlay"></div>
+
+<!-- Start Screen -->
+<div class="overlay" id="start-overlay">
+    <div class="overlay-card">
+        <h2 style="background: linear-gradient(135deg, #38bdf8, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Census Game</h2>
+        <p>Test your knowledge of US county demographics. Click counties matching the question criteria and climb through 10 tiers!</p>
+        <ul class="rules-list">
+            <li><strong>Click</strong> the county that answers the question</li>
+            <li><strong>Correct:</strong> +1 point, advance to next tier</li>
+            <li><strong>Wrong:</strong> -1 point, slider challenge to recover</li>
+            <li><strong>Slider:</strong> Estimate a stat within 10% to advance, otherwise game over</li>
+            <li>Reach <strong>Tier 10</strong> to win!</li>
+        </ul>
+        <button class="btn btn-primary" onclick="startGame()">Start Game</button>
+    </div>
+</div>
+
+<!-- Slider Challenge -->
+<div class="overlay hidden" id="slider-overlay">
+    <div class="overlay-card">
+        <h2 style="color: #fbbf24;">Slider Challenge</h2>
+        <p>You clicked the wrong county. Estimate this stat to recover!</p>
+        <div class="slider-container">
+            <div class="slider-question" id="slider-question-text"></div>
+            <div class="slider-value-display" id="slider-value-display">--</div>
+            <div class="slider-wrapper">
+                <input type="range" id="slider-input" min="0" max="100" value="50" step="0.1">
+            </div>
+            <div class="slider-labels">
+                <span id="slider-min-label">0</span>
+                <span id="slider-max-label">100</span>
+            </div>
+        </div>
+        <button class="btn btn-success" onclick="submitSlider()">Submit Estimate</button>
+        <button class="btn btn-secondary" onclick="skipSlider()">Skip (-1 pt, Game Over)</button>
+    </div>
+</div>
+
+<!-- Slider Result -->
+<div class="overlay hidden" id="slider-result-overlay">
+    <div class="overlay-card" id="slider-result-card">
+        <h2 id="slider-result-title"></h2>
+        <p id="slider-result-text"></p>
+        <button class="btn btn-primary" id="slider-result-btn" onclick="closeSliderResult()">Continue</button>
+    </div>
+</div>
+
+<!-- Game Over -->
+<div class="overlay hidden" id="gameover-overlay">
+    <div class="overlay-card">
+        <h2 style="color: #ef4444;">Game Over</h2>
+        <p>You reached</p>
+        <div class="final-score" id="final-score">0</div>
+        <p>points &middot; Tier <span id="final-tier">1</span></p>
+        <button class="btn btn-primary" onclick="startGame()" style="margin-top: 16px;">Play Again</button>
+        <button class="btn btn-secondary" onclick="window.location.href='/'">Back to Home</button>
+    </div>
+</div>
+
+<!-- Win Screen -->
+<div class="overlay hidden" id="win-overlay">
+    <div class="overlay-card">
+        <h2 style="color: #fbbf24;">You Win!</h2>
+        <p>Incredible! You cleared all tiers!</p>
+        <div class="final-score" id="win-score">0</div>
+        <p>points</p>
+        <button class="btn btn-success" onclick="startGame()" style="margin-top: 16px;">Play Again</button>
+        <button class="btn btn-secondary" onclick="window.location.href='/'">Back to Home</button>
+    </div>
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- TopoJSON client for county boundaries -->
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+
+<script>
+// =============================================
+// GAME STATE
+// =============================================
+const gameState = {
+    currentTier: 1,
+    maxTier: 0,
+    currentCluster: null,
+    sessionScore: 0,
+    lifetimeScore: parseInt(localStorage.getItem('census_lifetime') || '0'),
+    bestScore: parseInt(localStorage.getItem('census_best') || '0'),
+    gameActive: false,
+    sliderPending: false
+};
+
+let questionsData = null;
+let map = null;
+let countyLayers = {};
+let countyGeoData = null;
+
+// =============================================
+// INIT
+// =============================================
+document.getElementById('lifetime-display').textContent = gameState.bestScore;
+
+// Init Leaflet map
+map = L.map('map', {
+    center: [39.0, -98.0],
+    zoom: 5,
+    zoomControl: true,
+    dragging: false,
+    scrollWheelZoom: false,
+    doubleClickZoom: false,
+    touchZoom: false,
+    boxZoom: false
+});
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+    maxZoom: 14
+}).addTo(map);
+
+// Load data
+Promise.all([
+    fetch('data/questions.json').then(r => r.json()),
+    fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/counties-10m.json').then(r => r.json())
+]).then(([questions, topoData]) => {
+    questionsData = questions;
+    gameState.maxTier = questions.metric_pairs.length;
+    // Convert TopoJSON to GeoJSON and index by FIPS
+    const geojson = topojson.feature(topoData, topoData.objects.counties);
+    countyGeoData = {};
+    geojson.features.forEach(f => {
+        // FIPS codes: pad to 5 digits
+        const fips = String(f.id).padStart(5, '0');
+        countyGeoData[fips] = f;
+    });
+}).catch(err => {
+    console.error('Failed to load data:', err);
+    document.getElementById('question-text').textContent = 'Failed to load game data. Please refresh.';
+});
+
+// =============================================
+// GAME LOGIC
+// =============================================
+function startGame() {
+    gameState.currentTier = 1;
+    gameState.sessionScore = 0;
+    gameState.gameActive = true;
+    gameState.sliderPending = false;
+    updateDisplay();
+    hideAllOverlays();
+    loadTier(1);
+}
+
+function loadTier(tier) {
+    const tierData = questionsData.metric_pairs.find(mp => mp.tier === tier);
+    if (!tierData) {
+        showWin();
+        return;
+    }
+
+    // Pick a random cluster
+    const clusters = tierData.clusters;
+    const cluster = clusters[Math.floor(Math.random() * clusters.length)];
+    gameState.currentCluster = cluster;
+
+    // Update question panel
+    document.getElementById('tier-badge').textContent = 'TIER ' + tier;
+    document.getElementById('metric-name').textContent = tierData.metric_pair_name;
+    document.getElementById('question-text').textContent = cluster.click_question.question_text;
+    document.getElementById('hint-text').textContent = cluster.click_question.hint ? 'Hint: ' + cluster.click_question.hint : 'Click the matching county on the map';
+
+    renderCluster(cluster);
+}
+
+function renderCluster(cluster) {
+    // Clear old layers
+    Object.values(countyLayers).forEach(layer => map.removeLayer(layer));
+    countyLayers = {};
+
+    const bounds = [];
+
+    cluster.counties.forEach(county => {
+        const fips = String(county.fips).padStart(5, '0');
+        const geo = countyGeoData[fips];
+
+        if (geo) {
+            const layer = L.geoJSON(geo, {
+                style: {
+                    fillColor: '#3b82f6',
+                    fillOpacity: 0.3,
+                    color: '#60a5fa',
+                    weight: 1.5
+                },
+                onEachFeature: (feature, lyr) => {
+                    // Tooltip
+                    const metrics = county.metrics;
+                    let tooltipHtml = `<div class="county-name">${county.name}, ${county.state}</div>`;
+                    if (metrics.median_income !== undefined) tooltipHtml += `<div class="county-stat">Median Income: <span>$${metrics.median_income.toLocaleString()}</span></div>`;
+                    if (metrics.poverty_rate_pct !== undefined) tooltipHtml += `<div class="county-stat">Poverty Rate: <span>${metrics.poverty_rate_pct}%</span></div>`;
+                    if (metrics.unemployment_rate_pct !== undefined) tooltipHtml += `<div class="county-stat">Unemployment: <span>${metrics.unemployment_rate_pct}%</span></div>`;
+                    if (metrics.population_density_per_sq_mile !== undefined) tooltipHtml += `<div class="county-stat">Pop Density: <span>${metrics.population_density_per_sq_mile.toLocaleString()}/sq mi</span></div>`;
+                    if (metrics.median_age_years !== undefined) tooltipHtml += `<div class="county-stat">Median Age: <span>${metrics.median_age_years}</span></div>`;
+                    if (metrics.percent_bachelors_degree_pct !== undefined) tooltipHtml += `<div class="county-stat">Bachelor's Degree: <span>${metrics.percent_bachelors_degree_pct}%</span></div>`;
+
+                    lyr.bindTooltip(tooltipHtml, {
+                        className: 'county-tooltip',
+                        sticky: true
+                    });
+
+                    // Click handler
+                    lyr.on('click', () => handleCountyClick(fips, county, lyr));
+
+                    // Hover
+                    lyr.on('mouseover', () => {
+                        lyr.setStyle({ fillOpacity: 0.6, weight: 2.5 });
+                    });
+                    lyr.on('mouseout', () => {
+                        if (!lyr._highlighted) {
+                            lyr.setStyle({ fillOpacity: 0.3, weight: 1.5 });
+                        }
+                    });
+                }
+            }).addTo(map);
+
+            countyLayers[fips] = layer;
+
+            // Collect bounds
+            const b = layer.getBounds();
+            bounds.push(b);
+        } else {
+            // No GeoJSON boundary — show as circle marker
+            const marker = L.circleMarker([county.latitude, county.longitude], {
+                radius: 12,
+                fillColor: '#3b82f6',
+                fillOpacity: 0.4,
+                color: '#60a5fa',
+                weight: 1.5
+            }).addTo(map);
+
+            const metrics = county.metrics;
+            let tooltipHtml = `<div class="county-name">${county.name}, ${county.state}</div>`;
+            if (metrics.median_income !== undefined) tooltipHtml += `<div class="county-stat">Median Income: <span>$${metrics.median_income.toLocaleString()}</span></div>`;
+            if (metrics.poverty_rate_pct !== undefined) tooltipHtml += `<div class="county-stat">Poverty Rate: <span>${metrics.poverty_rate_pct}%</span></div>`;
+            if (metrics.unemployment_rate_pct !== undefined) tooltipHtml += `<div class="county-stat">Unemployment: <span>${metrics.unemployment_rate_pct}%</span></div>`;
+            if (metrics.population_density_per_sq_mile !== undefined) tooltipHtml += `<div class="county-stat">Pop Density: <span>${metrics.population_density_per_sq_mile.toLocaleString()}/sq mi</span></div>`;
+            if (metrics.median_age_years !== undefined) tooltipHtml += `<div class="county-stat">Median Age: <span>${metrics.median_age_years}</span></div>`;
+            if (metrics.percent_bachelors_degree_pct !== undefined) tooltipHtml += `<div class="county-stat">Bachelor's Degree: <span>${metrics.percent_bachelors_degree_pct}%</span></div>`;
+
+            marker.bindTooltip(tooltipHtml, { className: 'county-tooltip', sticky: true });
+            marker.on('click', () => handleCountyClick(fips, county, marker));
+
+            countyLayers[fips] = marker;
+            bounds.push(L.latLng(county.latitude, county.longitude));
+        }
+    });
+
+    // Fit map to cluster
+    if (bounds.length > 0) {
+        let combined = L.latLngBounds();
+        bounds.forEach(b => {
+            if (b.getBounds) combined.extend(b.getBounds());
+            else combined.extend(b);
+        });
+        map.fitBounds(combined, { padding: [40, 40], maxZoom: 10 });
+    }
+
+    // Allow zoom in within bounds but not panning
+    map.options.minZoom = map.getZoom() - 1;
+    map.scrollWheelZoom.enable();
+    map.touchZoom.enable();
+}
+
+function handleCountyClick(fips, county, layer) {
+    if (!gameState.gameActive || gameState.sliderPending) return;
+
+    const correct = gameState.currentCluster.click_question.correct_fips;
+    const isCorrect = correct.includes(fips);
+
+    if (isCorrect) {
+        // Highlight correct
+        highlightCounty(layer, '#10b981');
+        showFeedback('Correct! +1 point', true);
+        gameState.sessionScore += 1;
+        updateDisplay();
+
+        setTimeout(() => {
+            gameState.currentTier += 1;
+            if (gameState.currentTier > gameState.maxTier) {
+                showWin();
+            } else {
+                loadTier(gameState.currentTier);
+            }
+        }, 1200);
+    } else {
+        // Highlight wrong
+        highlightCounty(layer, '#ef4444');
+        showFeedback('Wrong! -1 point', false);
+        gameState.sessionScore = Math.max(0, gameState.sessionScore - 1);
+        updateDisplay();
+
+        // Show correct county
+        correct.forEach(cfips => {
+            if (countyLayers[cfips]) {
+                highlightCounty(countyLayers[cfips], '#fbbf24');
+            }
+        });
+
+        setTimeout(() => {
+            showSliderChallenge();
+        }, 1500);
+    }
+}
+
+function highlightCounty(layer, color) {
+    if (layer.setStyle) {
+        layer.setStyle({ fillColor: color, fillOpacity: 0.7, weight: 3, color: color });
+        layer._highlighted = true;
+    } else if (layer.eachLayer) {
+        layer.eachLayer(l => {
+            l.setStyle({ fillColor: color, fillOpacity: 0.7, weight: 3, color: color });
+            l._highlighted = true;
+        });
+    }
+}
+
+function showFeedback(text, isCorrect) {
+    const el = document.getElementById('feedback-overlay');
+    el.innerHTML = `<div class="feedback-msg ${isCorrect ? 'feedback-correct' : 'feedback-wrong'}">${text}</div>`;
+    setTimeout(() => { el.innerHTML = ''; }, 1200);
+}
+
+// =============================================
+// SLIDER CHALLENGE
+// =============================================
+function showSliderChallenge() {
+    const sq = gameState.currentCluster.slider_question;
+    gameState.sliderPending = true;
+
+    document.getElementById('slider-question-text').textContent = sq.question_text;
+
+    const slider = document.getElementById('slider-input');
+    slider.min = sq.slider_min;
+    slider.max = sq.slider_max;
+    slider.step = (sq.slider_max - sq.slider_min) < 50 ? 0.1 : 1;
+    slider.value = (sq.slider_min + sq.slider_max) / 2;
+
+    document.getElementById('slider-min-label').textContent = sq.slider_min;
+    document.getElementById('slider-max-label').textContent = sq.slider_max;
+    updateSliderDisplay();
+
+    document.getElementById('slider-overlay').classList.remove('hidden');
+}
+
+document.getElementById('slider-input').addEventListener('input', updateSliderDisplay);
+
+function updateSliderDisplay() {
+    const val = parseFloat(document.getElementById('slider-input').value);
+    const sq = gameState.currentCluster.slider_question;
+    let display = val;
+    if (sq.metric === 'median_income') display = '$' + Math.round(val).toLocaleString();
+    else if (sq.metric.includes('pct') || sq.metric.includes('rate')) display = val.toFixed(1) + '%';
+    else if (sq.metric.includes('years') || sq.metric.includes('minutes')) display = val.toFixed(1);
+    else display = Math.round(val).toLocaleString();
+    document.getElementById('slider-value-display').textContent = display;
+}
+
+function submitSlider() {
+    const sq = gameState.currentCluster.slider_question;
+    const userValue = parseFloat(document.getElementById('slider-input').value);
+    const correctValue = sq.correct_value;
+    const tolerance = sq.tolerance_pct;
+
+    const diff = Math.abs(userValue - correctValue) / correctValue;
+    const withinTolerance = diff <= tolerance;
+
+    document.getElementById('slider-overlay').classList.add('hidden');
+
+    const resultTitle = document.getElementById('slider-result-title');
+    const resultText = document.getElementById('slider-result-text');
+    const resultBtn = document.getElementById('slider-result-btn');
+
+    let correctDisplay = correctValue;
+    if (sq.metric === 'median_income') correctDisplay = '$' + correctValue.toLocaleString();
+    else if (sq.metric.includes('pct') || sq.metric.includes('rate')) correctDisplay = correctValue + '%';
+
+    if (withinTolerance) {
+        resultTitle.textContent = 'Nice Estimate!';
+        resultTitle.style.color = '#10b981';
+        resultText.innerHTML = `The correct value was <strong>${correctDisplay}</strong>. You were within ${Math.round(diff * 100)}%!<br><strong>+2 bonus points. Advancing!</strong>`;
+        gameState.sessionScore += 2;
+        gameState.sliderPending = false;
+        resultBtn.onclick = () => {
+            hideSliderResult();
+            gameState.currentTier += 1;
+            if (gameState.currentTier > gameState.maxTier) {
+                showWin();
+            } else {
+                loadTier(gameState.currentTier);
+            }
+        };
+    } else {
+        resultTitle.textContent = 'Too Far Off';
+        resultTitle.style.color = '#ef4444';
+        resultText.innerHTML = `The correct value was <strong>${correctDisplay}</strong>. You were off by ${Math.round(diff * 100)}%.<br><strong>-1 point. Game over!</strong>`;
+        gameState.sessionScore = Math.max(0, gameState.sessionScore - 1);
+        gameState.sliderPending = false;
+        resultBtn.onclick = () => {
+            hideSliderResult();
+            showGameOver();
+        };
+    }
+
+    updateDisplay();
+    document.getElementById('slider-result-overlay').classList.remove('hidden');
+}
+
+function skipSlider() {
+    document.getElementById('slider-overlay').classList.add('hidden');
+    gameState.sessionScore = Math.max(0, gameState.sessionScore - 1);
+    gameState.sliderPending = false;
+    updateDisplay();
+    showGameOver();
+}
+
+function hideSliderResult() {
+    document.getElementById('slider-result-overlay').classList.add('hidden');
+}
+
+function closeSliderResult() {
+    // Handled by dynamic onclick above
+}
+
+// =============================================
+// END SCREENS
+// =============================================
+function showGameOver() {
+    gameState.gameActive = false;
+    saveScores();
+    document.getElementById('final-score').textContent = gameState.sessionScore;
+    document.getElementById('final-tier').textContent = gameState.currentTier;
+    document.getElementById('gameover-overlay').classList.remove('hidden');
+}
+
+function showWin() {
+    gameState.gameActive = false;
+    saveScores();
+    document.getElementById('win-score').textContent = gameState.sessionScore;
+    document.getElementById('win-overlay').classList.remove('hidden');
+}
+
+function saveScores() {
+    if (gameState.sessionScore > gameState.bestScore) {
+        gameState.bestScore = gameState.sessionScore;
+        localStorage.setItem('census_best', gameState.bestScore.toString());
+    }
+    gameState.lifetimeScore += gameState.sessionScore;
+    localStorage.setItem('census_lifetime', gameState.lifetimeScore.toString());
+}
+
+// =============================================
+// UI HELPERS
+// =============================================
+function updateDisplay() {
+    document.getElementById('tier-display').textContent = gameState.currentTier;
+    document.getElementById('score-display').textContent = gameState.sessionScore;
+    document.getElementById('lifetime-display').textContent = gameState.bestScore;
+}
+
+function hideAllOverlays() {
+    document.getElementById('start-overlay').classList.add('hidden');
+    document.getElementById('slider-overlay').classList.add('hidden');
+    document.getElementById('slider-result-overlay').classList.add('hidden');
+    document.getElementById('gameover-overlay').classList.add('hidden');
+    document.getElementById('win-overlay').classList.add('hidden');
+}
+</script>
+
+</body>
+</html>

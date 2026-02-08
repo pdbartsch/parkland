@@ -1,0 +1,198 @@
+{
+  "metadata": {
+    "generated_at": "2026-02-08T00:00:00Z",
+    "version": "1.0.0",
+    "data_year": "2024 ACS 5-year"
+  },
+  "metric_pairs": [
+    {
+      "tier": 1,
+      "metric_pair_name": "Median Income vs Poverty Rate",
+      "metric_1": "median_income",
+      "metric_2": "poverty_rate_pct",
+      "clusters": [
+        {
+          "cluster_id": "c_1_a",
+          "click_question": {
+            "question_text": "Which county has the highest median income?",
+            "correct_fips": ["06085"],
+            "hint": "Look for the tech hub"
+          },
+          "slider_question": {
+            "question_text": "Estimate the average poverty rate (%) for this cluster",
+            "metric": "poverty_rate_pct",
+            "correct_value": 11.2,
+            "tolerance_pct": 0.10,
+            "slider_min": 5,
+            "slider_max": 25
+          },
+          "counties": [
+            { "fips": "06085", "name": "Santa Clara", "state": "CA", "latitude": 37.36, "longitude": -121.97, "metrics": { "median_income": 130890, "poverty_rate_pct": 7.3, "unemployment_rate_pct": 3.8, "population_density_per_sq_mile": 1530, "median_age_years": 37.2 }},
+            { "fips": "06001", "name": "Alameda", "state": "CA", "latitude": 37.65, "longitude": -121.89, "metrics": { "median_income": 112580, "poverty_rate_pct": 10.5, "unemployment_rate_pct": 4.2, "population_density_per_sq_mile": 2100, "median_age_years": 38.2 }},
+            { "fips": "06081", "name": "San Mateo", "state": "CA", "latitude": 37.43, "longitude": -122.35, "metrics": { "median_income": 128090, "poverty_rate_pct": 6.8, "unemployment_rate_pct": 3.5, "population_density_per_sq_mile": 1670, "median_age_years": 39.5 }},
+            { "fips": "06075", "name": "San Francisco", "state": "CA", "latitude": 37.77, "longitude": -122.42, "metrics": { "median_income": 119136, "poverty_rate_pct": 11.5, "unemployment_rate_pct": 4.0, "population_density_per_sq_mile": 18500, "median_age_years": 38.5 }},
+            { "fips": "06013", "name": "Contra Costa", "state": "CA", "latitude": 37.92, "longitude": -121.95, "metrics": { "median_income": 104160, "poverty_rate_pct": 8.9, "unemployment_rate_pct": 4.5, "population_density_per_sq_mile": 1490, "median_age_years": 39.8 }},
+            { "fips": "06095", "name": "Solano", "state": "CA", "latitude": 38.27, "longitude": -121.94, "metrics": { "median_income": 85750, "poverty_rate_pct": 10.8, "unemployment_rate_pct": 5.2, "population_density_per_sq_mile": 520, "median_age_years": 37.9 }},
+            { "fips": "06097", "name": "Sonoma", "state": "CA", "latitude": 38.52, "longitude": -122.94, "metrics": { "median_income": 84420, "poverty_rate_pct": 10.1, "unemployment_rate_pct": 4.1, "population_density_per_sq_mile": 310, "median_age_years": 41.2 }},
+            { "fips": "06041", "name": "Marin", "state": "CA", "latitude": 38.05, "longitude": -122.74, "metrics": { "median_income": 122070, "poverty_rate_pct": 7.5, "unemployment_rate_pct": 3.3, "population_density_per_sq_mile": 490, "median_age_years": 45.5 }},
+            { "fips": "06087", "name": "Santa Cruz", "state": "CA", "latitude": 37.06, "longitude": -122.08, "metrics": { "median_income": 87720, "poverty_rate_pct": 12.6, "unemployment_rate_pct": 5.8, "population_density_per_sq_mile": 580, "median_age_years": 36.1 }},
+            { "fips": "06069", "name": "San Benito", "state": "CA", "latitude": 36.61, "longitude": -121.08, "metrics": { "median_income": 82650, "poverty_rate_pct": 9.4, "unemployment_rate_pct": 6.1, "population_density_per_sq_mile": 44, "median_age_years": 34.8 }},
+            { "fips": "06099", "name": "Stanislaus", "state": "CA", "latitude": 37.56, "longitude": -120.99, "metrics": { "median_income": 62230, "poverty_rate_pct": 16.2, "unemployment_rate_pct": 7.8, "population_density_per_sq_mile": 370, "median_age_years": 33.5 }},
+            { "fips": "06077", "name": "San Joaquin", "state": "CA", "latitude": 37.93, "longitude": -121.27, "metrics": { "median_income": 64920, "poverty_rate_pct": 15.8, "unemployment_rate_pct": 7.5, "population_density_per_sq_mile": 520, "median_age_years": 33.2 }},
+            { "fips": "06067", "name": "Sacramento", "state": "CA", "latitude": 38.45, "longitude": -121.34, "metrics": { "median_income": 71150, "poverty_rate_pct": 14.5, "unemployment_rate_pct": 5.9, "population_density_per_sq_mile": 1590, "median_age_years": 36.1 }},
+            { "fips": "06113", "name": "Yolo", "state": "CA", "latitude": 38.69, "longitude": -121.90, "metrics": { "median_income": 68440, "poverty_rate_pct": 18.5, "unemployment_rate_pct": 5.4, "population_density_per_sq_mile": 200, "median_age_years": 30.8 }},
+            { "fips": "06055", "name": "Napa", "state": "CA", "latitude": 38.50, "longitude": -122.33, "metrics": { "median_income": 91210, "poverty_rate_pct": 8.4, "unemployment_rate_pct": 3.9, "population_density_per_sq_mile": 180, "median_age_years": 40.1 }}
+          ]
+        },
+        {
+          "cluster_id": "c_1_b",
+          "click_question": {
+            "question_text": "Which county has the highest poverty rate?",
+            "correct_fips": ["13215"],
+            "hint": "Look in rural Georgia"
+          },
+          "slider_question": {
+            "question_text": "Estimate the average median income ($) for this cluster",
+            "metric": "median_income",
+            "correct_value": 42800,
+            "tolerance_pct": 0.10,
+            "slider_min": 25000,
+            "slider_max": 65000
+          },
+          "counties": [
+            { "fips": "13215", "name": "Muscogee", "state": "GA", "latitude": 32.51, "longitude": -84.87, "metrics": { "median_income": 40120, "poverty_rate_pct": 24.1, "unemployment_rate_pct": 6.8, "population_density_per_sq_mile": 880, "median_age_years": 33.5 }},
+            { "fips": "13021", "name": "Bibb", "state": "GA", "latitude": 32.80, "longitude": -83.69, "metrics": { "median_income": 38450, "poverty_rate_pct": 23.8, "unemployment_rate_pct": 6.2, "population_density_per_sq_mile": 580, "median_age_years": 35.2 }},
+            { "fips": "13153", "name": "Houston", "state": "GA", "latitude": 32.46, "longitude": -83.63, "metrics": { "median_income": 56820, "poverty_rate_pct": 11.4, "unemployment_rate_pct": 4.5, "population_density_per_sq_mile": 310, "median_age_years": 35.8 }},
+            { "fips": "13225", "name": "Peach", "state": "GA", "latitude": 32.57, "longitude": -83.83, "metrics": { "median_income": 45610, "poverty_rate_pct": 18.2, "unemployment_rate_pct": 5.8, "population_density_per_sq_mile": 190, "median_age_years": 36.1 }},
+            { "fips": "13289", "name": "Twiggs", "state": "GA", "latitude": 32.67, "longitude": -83.42, "metrics": { "median_income": 32100, "poverty_rate_pct": 22.5, "unemployment_rate_pct": 7.4, "population_density_per_sq_mile": 25, "median_age_years": 42.5 }},
+            { "fips": "13309", "name": "Wheeler", "state": "GA", "latitude": 32.12, "longitude": -82.72, "metrics": { "median_income": 28950, "poverty_rate_pct": 21.8, "unemployment_rate_pct": 8.1, "population_density_per_sq_mile": 18, "median_age_years": 38.9 }},
+            { "fips": "13091", "name": "Dodge", "state": "GA", "latitude": 32.17, "longitude": -83.17, "metrics": { "median_income": 34520, "poverty_rate_pct": 20.1, "unemployment_rate_pct": 6.9, "population_density_per_sq_mile": 42, "median_age_years": 39.2 }},
+            { "fips": "13175", "name": "Laurens", "state": "GA", "latitude": 32.45, "longitude": -82.92, "metrics": { "median_income": 35890, "poverty_rate_pct": 19.5, "unemployment_rate_pct": 6.5, "population_density_per_sq_mile": 58, "median_age_years": 38.1 }},
+            { "fips": "13023", "name": "Bleckley", "state": "GA", "latitude": 32.43, "longitude": -83.33, "metrics": { "median_income": 41200, "poverty_rate_pct": 16.8, "unemployment_rate_pct": 5.2, "population_density_per_sq_mile": 68, "median_age_years": 37.5 }},
+            { "fips": "13247", "name": "Pulaski", "state": "GA", "latitude": 32.23, "longitude": -83.47, "metrics": { "median_income": 36750, "poverty_rate_pct": 18.9, "unemployment_rate_pct": 6.1, "population_density_per_sq_mile": 35, "median_age_years": 39.8 }},
+            { "fips": "13319", "name": "Wilkinson", "state": "GA", "latitude": 32.80, "longitude": -83.17, "metrics": { "median_income": 33200, "poverty_rate_pct": 19.2, "unemployment_rate_pct": 7.0, "population_density_per_sq_mile": 22, "median_age_years": 41.2 }},
+            { "fips": "13161", "name": "Jeff Davis", "state": "GA", "latitude": 31.80, "longitude": -82.63, "metrics": { "median_income": 37450, "poverty_rate_pct": 17.6, "unemployment_rate_pct": 5.8, "population_density_per_sq_mile": 45, "median_age_years": 38.5 }},
+            { "fips": "13209", "name": "Montgomery", "state": "GA", "latitude": 32.18, "longitude": -82.53, "metrics": { "median_income": 31800, "poverty_rate_pct": 20.4, "unemployment_rate_pct": 7.2, "population_density_per_sq_mile": 28, "median_age_years": 40.1 }},
+            { "fips": "13271", "name": "Telfair", "state": "GA", "latitude": 31.95, "longitude": -82.93, "metrics": { "median_income": 29500, "poverty_rate_pct": 23.1, "unemployment_rate_pct": 8.5, "population_density_per_sq_mile": 30, "median_age_years": 39.5 }},
+            { "fips": "13167", "name": "Johnson", "state": "GA", "latitude": 32.70, "longitude": -82.67, "metrics": { "median_income": 30250, "poverty_rate_pct": 21.3, "unemployment_rate_pct": 7.8, "population_density_per_sq_mile": 32, "median_age_years": 40.8 }}
+          ]
+        },
+        {
+          "cluster_id": "c_1_c",
+          "click_question": {
+            "question_text": "Which county has the lowest poverty rate?",
+            "correct_fips": ["48085"],
+            "hint": "Think Dallas suburbs"
+          },
+          "slider_question": {
+            "question_text": "Estimate the average unemployment rate (%) for this cluster",
+            "metric": "unemployment_rate_pct",
+            "correct_value": 4.6,
+            "tolerance_pct": 0.10,
+            "slider_min": 2,
+            "slider_max": 9
+          },
+          "counties": [
+            { "fips": "48085", "name": "Collin", "state": "TX", "latitude": 33.19, "longitude": -96.57, "metrics": { "median_income": 105210, "poverty_rate_pct": 5.1, "unemployment_rate_pct": 3.2, "population_density_per_sq_mile": 1220, "median_age_years": 36.5 }},
+            { "fips": "48113", "name": "Dallas", "state": "TX", "latitude": 32.77, "longitude": -96.77, "metrics": { "median_income": 57020, "poverty_rate_pct": 15.6, "unemployment_rate_pct": 4.8, "population_density_per_sq_mile": 2950, "median_age_years": 33.4 }},
+            { "fips": "48121", "name": "Denton", "state": "TX", "latitude": 33.20, "longitude": -97.11, "metrics": { "median_income": 88760, "poverty_rate_pct": 8.2, "unemployment_rate_pct": 3.5, "population_density_per_sq_mile": 960, "median_age_years": 34.2 }},
+            { "fips": "48439", "name": "Tarrant", "state": "TX", "latitude": 32.77, "longitude": -97.29, "metrics": { "median_income": 68450, "poverty_rate_pct": 11.5, "unemployment_rate_pct": 4.2, "population_density_per_sq_mile": 2320, "median_age_years": 34.1 }},
+            { "fips": "48251", "name": "Johnson", "state": "TX", "latitude": 32.37, "longitude": -97.37, "metrics": { "median_income": 65830, "poverty_rate_pct": 10.2, "unemployment_rate_pct": 4.5, "population_density_per_sq_mile": 240, "median_age_years": 36.8 }},
+            { "fips": "48367", "name": "Parker", "state": "TX", "latitude": 32.78, "longitude": -97.80, "metrics": { "median_income": 82910, "poverty_rate_pct": 6.8, "unemployment_rate_pct": 3.6, "population_density_per_sq_mile": 165, "median_age_years": 39.5 }},
+            { "fips": "48397", "name": "Rockwall", "state": "TX", "latitude": 32.90, "longitude": -96.41, "metrics": { "median_income": 98540, "poverty_rate_pct": 5.5, "unemployment_rate_pct": 3.1, "population_density_per_sq_mile": 720, "median_age_years": 36.9 }},
+            { "fips": "48257", "name": "Kaufman", "state": "TX", "latitude": 32.60, "longitude": -96.29, "metrics": { "median_income": 72350, "poverty_rate_pct": 9.8, "unemployment_rate_pct": 4.8, "population_density_per_sq_mile": 175, "median_age_years": 35.2 }},
+            { "fips": "48139", "name": "Ellis", "state": "TX", "latitude": 32.35, "longitude": -96.79, "metrics": { "median_income": 74680, "poverty_rate_pct": 8.9, "unemployment_rate_pct": 4.1, "population_density_per_sq_mile": 210, "median_age_years": 36.1 }},
+            { "fips": "48497", "name": "Wise", "state": "TX", "latitude": 33.22, "longitude": -97.66, "metrics": { "median_income": 68920, "poverty_rate_pct": 9.5, "unemployment_rate_pct": 4.3, "population_density_per_sq_mile": 75, "median_age_years": 37.8 }},
+            { "fips": "48231", "name": "Hunt", "state": "TX", "latitude": 33.12, "longitude": -96.08, "metrics": { "median_income": 56780, "poverty_rate_pct": 13.5, "unemployment_rate_pct": 5.2, "population_density_per_sq_mile": 110, "median_age_years": 38.2 }},
+            { "fips": "48147", "name": "Fannin", "state": "TX", "latitude": 33.59, "longitude": -96.11, "metrics": { "median_income": 50120, "poverty_rate_pct": 14.8, "unemployment_rate_pct": 5.9, "population_density_per_sq_mile": 38, "median_age_years": 41.5 }},
+            { "fips": "48221", "name": "Hood", "state": "TX", "latitude": 32.43, "longitude": -97.83, "metrics": { "median_income": 71250, "poverty_rate_pct": 7.9, "unemployment_rate_pct": 3.8, "population_density_per_sq_mile": 155, "median_age_years": 44.2 }},
+            { "fips": "48349", "name": "Navarro", "state": "TX", "latitude": 32.05, "longitude": -96.47, "metrics": { "median_income": 48950, "poverty_rate_pct": 16.2, "unemployment_rate_pct": 5.8, "population_density_per_sq_mile": 48, "median_age_years": 37.9 }},
+            { "fips": "48425", "name": "Somervell", "state": "TX", "latitude": 32.22, "longitude": -97.77, "metrics": { "median_income": 62400, "poverty_rate_pct": 9.1, "unemployment_rate_pct": 4.0, "population_density_per_sq_mile": 55, "median_age_years": 40.5 }}
+          ]
+        }
+      ]
+    },
+    {
+      "tier": 2,
+      "metric_pair_name": "Education vs Unemployment",
+      "metric_1": "percent_bachelors_degree_pct",
+      "metric_2": "unemployment_rate_pct",
+      "clusters": [
+        {
+          "cluster_id": "c_2_a",
+          "click_question": {
+            "question_text": "Which county has the highest percentage of residents with a bachelor's degree?",
+            "correct_fips": ["08031"],
+            "hint": "A major Colorado city"
+          },
+          "slider_question": {
+            "question_text": "Estimate the average unemployment rate (%) for this cluster",
+            "metric": "unemployment_rate_pct",
+            "correct_value": 4.1,
+            "tolerance_pct": 0.10,
+            "slider_min": 2,
+            "slider_max": 8
+          },
+          "counties": [
+            { "fips": "08031", "name": "Denver", "state": "CO", "latitude": 39.74, "longitude": -104.99, "metrics": { "median_income": 78420, "poverty_rate_pct": 12.2, "unemployment_rate_pct": 3.8, "population_density_per_sq_mile": 4600, "median_age_years": 34.6, "percent_bachelors_degree_pct": 52.1 }},
+            { "fips": "08005", "name": "Arapahoe", "state": "CO", "latitude": 39.65, "longitude": -104.34, "metrics": { "median_income": 75680, "poverty_rate_pct": 9.5, "unemployment_rate_pct": 3.9, "population_density_per_sq_mile": 730, "median_age_years": 36.8, "percent_bachelors_degree_pct": 42.3 }},
+            { "fips": "08035", "name": "Douglas", "state": "CO", "latitude": 39.33, "longitude": -104.93, "metrics": { "median_income": 122500, "poverty_rate_pct": 3.5, "unemployment_rate_pct": 3.1, "population_density_per_sq_mile": 420, "median_age_years": 38.9, "percent_bachelors_degree_pct": 51.8 }},
+            { "fips": "08059", "name": "Jefferson", "state": "CO", "latitude": 39.59, "longitude": -105.25, "metrics": { "median_income": 85640, "poverty_rate_pct": 6.8, "unemployment_rate_pct": 3.5, "population_density_per_sq_mile": 710, "median_age_years": 40.2, "percent_bachelors_degree_pct": 44.5 }},
+            { "fips": "08001", "name": "Adams", "state": "CO", "latitude": 39.87, "longitude": -104.33, "metrics": { "median_income": 69450, "poverty_rate_pct": 11.2, "unemployment_rate_pct": 4.5, "population_density_per_sq_mile": 390, "median_age_years": 33.1, "percent_bachelors_degree_pct": 25.8 }},
+            { "fips": "08013", "name": "Boulder", "state": "CO", "latitude": 40.09, "longitude": -105.36, "metrics": { "median_income": 82350, "poverty_rate_pct": 12.8, "unemployment_rate_pct": 3.6, "population_density_per_sq_mile": 440, "median_age_years": 36.4, "percent_bachelors_degree_pct": 50.2 }},
+            { "fips": "08069", "name": "Larimer", "state": "CO", "latitude": 40.66, "longitude": -105.46, "metrics": { "median_income": 74210, "poverty_rate_pct": 10.5, "unemployment_rate_pct": 3.8, "population_density_per_sq_mile": 130, "median_age_years": 35.8, "percent_bachelors_degree_pct": 45.6 }},
+            { "fips": "08123", "name": "Weld", "state": "CO", "latitude": 40.55, "longitude": -104.39, "metrics": { "median_income": 72890, "poverty_rate_pct": 10.1, "unemployment_rate_pct": 4.2, "population_density_per_sq_mile": 78, "median_age_years": 33.5, "percent_bachelors_degree_pct": 26.4 }},
+            { "fips": "08039", "name": "Elbert", "state": "CO", "latitude": 39.29, "longitude": -104.13, "metrics": { "median_income": 95600, "poverty_rate_pct": 4.2, "unemployment_rate_pct": 3.4, "population_density_per_sq_mile": 15, "median_age_years": 42.1, "percent_bachelors_degree_pct": 38.9 }},
+            { "fips": "08019", "name": "Clear Creek", "state": "CO", "latitude": 39.68, "longitude": -105.68, "metrics": { "median_income": 78450, "poverty_rate_pct": 5.8, "unemployment_rate_pct": 3.9, "population_density_per_sq_mile": 24, "median_age_years": 43.5, "percent_bachelors_degree_pct": 41.2 }},
+            { "fips": "08047", "name": "Gilpin", "state": "CO", "latitude": 39.86, "longitude": -105.52, "metrics": { "median_income": 72100, "poverty_rate_pct": 6.1, "unemployment_rate_pct": 4.1, "population_density_per_sq_mile": 38, "median_age_years": 45.8, "percent_bachelors_degree_pct": 36.5 }},
+            { "fips": "08014", "name": "Broomfield", "state": "CO", "latitude": 39.92, "longitude": -105.09, "metrics": { "median_income": 92380, "poverty_rate_pct": 5.5, "unemployment_rate_pct": 3.4, "population_density_per_sq_mile": 2200, "median_age_years": 37.2, "percent_bachelors_degree_pct": 48.7 }},
+            { "fips": "08041", "name": "El Paso", "state": "CO", "latitude": 38.83, "longitude": -104.76, "metrics": { "median_income": 71200, "poverty_rate_pct": 10.8, "unemployment_rate_pct": 5.1, "population_density_per_sq_mile": 340, "median_age_years": 34.2, "percent_bachelors_degree_pct": 35.2 }},
+            { "fips": "08101", "name": "Pueblo", "state": "CO", "latitude": 38.17, "longitude": -104.51, "metrics": { "median_income": 48920, "poverty_rate_pct": 18.5, "unemployment_rate_pct": 6.2, "population_density_per_sq_mile": 63, "median_age_years": 38.5, "percent_bachelors_degree_pct": 20.8 }},
+            { "fips": "08119", "name": "Teller", "state": "CO", "latitude": 38.88, "longitude": -105.16, "metrics": { "median_income": 68750, "poverty_rate_pct": 7.2, "unemployment_rate_pct": 4.5, "population_density_per_sq_mile": 40, "median_age_years": 46.2, "percent_bachelors_degree_pct": 32.1 }}
+          ]
+        }
+      ]
+    },
+    {
+      "tier": 3,
+      "metric_pair_name": "Population Density vs Median Age",
+      "metric_1": "population_density_per_sq_mile",
+      "metric_2": "median_age_years",
+      "clusters": [
+        {
+          "cluster_id": "c_3_a",
+          "click_question": {
+            "question_text": "Which county has the highest population density?",
+            "correct_fips": ["36061"],
+            "hint": "The most iconic borough"
+          },
+          "slider_question": {
+            "question_text": "Estimate the average median age (years) for this cluster",
+            "metric": "median_age_years",
+            "correct_value": 38.2,
+            "tolerance_pct": 0.10,
+            "slider_min": 30,
+            "slider_max": 48
+          },
+          "counties": [
+            { "fips": "36061", "name": "New York (Manhattan)", "state": "NY", "latitude": 40.78, "longitude": -73.97, "metrics": { "median_income": 93650, "poverty_rate_pct": 15.6, "unemployment_rate_pct": 5.1, "population_density_per_sq_mile": 72000, "median_age_years": 37.2 }},
+            { "fips": "36047", "name": "Kings (Brooklyn)", "state": "NY", "latitude": 40.63, "longitude": -73.95, "metrics": { "median_income": 63020, "poverty_rate_pct": 19.2, "unemployment_rate_pct": 6.2, "population_density_per_sq_mile": 37000, "median_age_years": 34.8 }},
+            { "fips": "36081", "name": "Queens", "state": "NY", "latitude": 40.68, "longitude": -73.83, "metrics": { "median_income": 72250, "poverty_rate_pct": 13.5, "unemployment_rate_pct": 5.5, "population_density_per_sq_mile": 21500, "median_age_years": 39.1 }},
+            { "fips": "36005", "name": "Bronx", "state": "NY", "latitude": 40.85, "longitude": -73.87, "metrics": { "median_income": 40100, "poverty_rate_pct": 27.3, "unemployment_rate_pct": 8.2, "population_density_per_sq_mile": 34000, "median_age_years": 34.5 }},
+            { "fips": "36085", "name": "Richmond (Staten Island)", "state": "NY", "latitude": 40.58, "longitude": -74.15, "metrics": { "median_income": 82420, "poverty_rate_pct": 11.1, "unemployment_rate_pct": 5.0, "population_density_per_sq_mile": 8200, "median_age_years": 39.8 }},
+            { "fips": "36059", "name": "Nassau", "state": "NY", "latitude": 40.74, "longitude": -73.59, "metrics": { "median_income": 114820, "poverty_rate_pct": 5.8, "unemployment_rate_pct": 3.8, "population_density_per_sq_mile": 4700, "median_age_years": 42.1 }},
+            { "fips": "36103", "name": "Suffolk", "state": "NY", "latitude": 40.94, "longitude": -72.68, "metrics": { "median_income": 101250, "poverty_rate_pct": 7.2, "unemployment_rate_pct": 4.1, "population_density_per_sq_mile": 1600, "median_age_years": 41.5 }},
+            { "fips": "36119", "name": "Westchester", "state": "NY", "latitude": 41.12, "longitude": -73.76, "metrics": { "median_income": 99680, "poverty_rate_pct": 9.2, "unemployment_rate_pct": 4.5, "population_density_per_sq_mile": 2200, "median_age_years": 40.5 }},
+            { "fips": "36071", "name": "Orange", "state": "NY", "latitude": 41.40, "longitude": -74.31, "metrics": { "median_income": 78450, "poverty_rate_pct": 12.1, "unemployment_rate_pct": 4.8, "population_density_per_sq_mile": 450, "median_age_years": 37.2 }},
+            { "fips": "36087", "name": "Rockland", "state": "NY", "latitude": 41.15, "longitude": -74.02, "metrics": { "median_income": 87650, "poverty_rate_pct": 15.8, "unemployment_rate_pct": 4.5, "population_density_per_sq_mile": 1850, "median_age_years": 36.8 }},
+            { "fips": "34003", "name": "Bergen", "state": "NJ", "latitude": 40.96, "longitude": -74.07, "metrics": { "median_income": 102380, "poverty_rate_pct": 7.5, "unemployment_rate_pct": 4.2, "population_density_per_sq_mile": 3900, "median_age_years": 41.8 }},
+            { "fips": "34017", "name": "Hudson", "state": "NJ", "latitude": 40.73, "longitude": -74.08, "metrics": { "median_income": 72850, "poverty_rate_pct": 15.2, "unemployment_rate_pct": 5.8, "population_density_per_sq_mile": 14200, "median_age_years": 34.5 }},
+            { "fips": "34013", "name": "Essex", "state": "NJ", "latitude": 40.79, "longitude": -74.25, "metrics": { "median_income": 64520, "poverty_rate_pct": 14.8, "unemployment_rate_pct": 5.9, "population_density_per_sq_mile": 6100, "median_age_years": 37.8 }},
+            { "fips": "34031", "name": "Passaic", "state": "NJ", "latitude": 41.06, "longitude": -74.30, "metrics": { "median_income": 68920, "poverty_rate_pct": 13.5, "unemployment_rate_pct": 5.5, "population_density_per_sq_mile": 2700, "median_age_years": 37.5 }},
+            { "fips": "34039", "name": "Union", "state": "NJ", "latitude": 40.66, "longitude": -74.31, "metrics": { "median_income": 82150, "poverty_rate_pct": 9.8, "unemployment_rate_pct": 5.1, "population_density_per_sq_mile": 5200, "median_age_years": 38.5 }}
+          ]
+        }
+      ]
+    }
+  ]
+}
