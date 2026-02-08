@@ -99,15 +99,25 @@
         #map {
             flex: 1;
             z-index: 1;
+            width: 100%;
+            height: 100%;
         }
 
-        /* Question panel */
+        /* Question panel - floating on map */
         #question-panel {
-            background: #1e293b;
-            border-top: 2px solid #334155;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+            border: 2px solid #0ea5e9;
+            border-radius: 16px;
             padding: 16px 24px;
-            flex-shrink: 0;
             z-index: 1000;
+            max-width: 600px;
+            width: calc(100% - 40px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(14, 165, 233, 0.15);
         }
 
         .question-meta {
@@ -128,20 +138,22 @@
         }
 
         .metric-name {
-            color: #64748b;
+            color: #94a3b8;
             font-size: 12px;
         }
 
         #question-text {
-            font-size: 18px;
-            font-weight: 600;
-            color: #f1f5f9;
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
             margin-bottom: 6px;
+            line-height: 1.4;
         }
 
         #hint-text {
-            color: #64748b;
+            color: #fbbf24;
             font-size: 13px;
+            font-weight: 500;
         }
 
         /* Overlays */
@@ -400,9 +412,15 @@
             <span class="metric-name" id="metric-name"></span>
         </div>
         <div id="question-text">Loading...</div>
-        <div id="hint-text"></div>
+        <div id="hint-text">Click a county on the map</div>
     </section>
 </main>
+
+<!-- County info panel (shown on hover) -->
+<div id="county-info-panel" style="display:none; position:fixed; top:70px; right:20px; background:rgba(15,23,42,0.95); backdrop-filter:blur(12px); border:1px solid #475569; border-radius:12px; padding:16px; z-index:1000; min-width:220px; box-shadow:0 8px 24px rgba(0,0,0,0.4);">
+    <div id="county-info-name" style="font-weight:700; font-size:16px; color:#fff; margin-bottom:8px;"></div>
+    <div id="county-info-stats" style="font-size:13px; color:#94a3b8; line-height:1.8;"></div>
+</div>
 
 <div id="feedback-overlay"></div>
 
@@ -577,10 +595,37 @@ function loadTier(tier) {
     renderCluster(cluster);
 }
 
+let countyLabels = [];
+
+function buildStatsHtml(metrics) {
+    let html = '';
+    if (metrics.median_income !== undefined) html += `<div>Median Income: <span style="color:#38bdf8;font-weight:600">$${metrics.median_income.toLocaleString()}</span></div>`;
+    if (metrics.poverty_rate_pct !== undefined) html += `<div>Poverty Rate: <span style="color:#38bdf8;font-weight:600">${metrics.poverty_rate_pct}%</span></div>`;
+    if (metrics.unemployment_rate_pct !== undefined) html += `<div>Unemployment: <span style="color:#38bdf8;font-weight:600">${metrics.unemployment_rate_pct}%</span></div>`;
+    if (metrics.population_density_per_sq_mile !== undefined) html += `<div>Pop Density: <span style="color:#38bdf8;font-weight:600">${metrics.population_density_per_sq_mile.toLocaleString()}/sq mi</span></div>`;
+    if (metrics.median_age_years !== undefined) html += `<div>Median Age: <span style="color:#38bdf8;font-weight:600">${metrics.median_age_years}</span></div>`;
+    if (metrics.percent_bachelors_degree_pct !== undefined) html += `<div>Bachelor's Degree: <span style="color:#38bdf8;font-weight:600">${metrics.percent_bachelors_degree_pct}%</span></div>`;
+    return html;
+}
+
+function showCountyInfo(county) {
+    const panel = document.getElementById('county-info-panel');
+    document.getElementById('county-info-name').textContent = county.name + ', ' + county.state;
+    document.getElementById('county-info-stats').innerHTML = buildStatsHtml(county.metrics);
+    panel.style.display = 'block';
+}
+
+function hideCountyInfo() {
+    document.getElementById('county-info-panel').style.display = 'none';
+}
+
 function renderCluster(cluster) {
-    // Clear old layers
+    // Clear old layers and labels
     Object.values(countyLayers).forEach(layer => map.removeLayer(layer));
     countyLayers = {};
+    countyLabels.forEach(l => map.removeLayer(l));
+    countyLabels = [];
+    hideCountyInfo();
 
     const bounds = [];
 
@@ -592,67 +637,66 @@ function renderCluster(cluster) {
             const layer = L.geoJSON(geo, {
                 style: {
                     fillColor: '#3b82f6',
-                    fillOpacity: 0.3,
+                    fillOpacity: 0.35,
                     color: '#60a5fa',
-                    weight: 1.5
+                    weight: 2
                 },
                 onEachFeature: (feature, lyr) => {
-                    // Tooltip
-                    const metrics = county.metrics;
-                    let tooltipHtml = `<div class="county-name">${county.name}, ${county.state}</div>`;
-                    if (metrics.median_income !== undefined) tooltipHtml += `<div class="county-stat">Median Income: <span>$${metrics.median_income.toLocaleString()}</span></div>`;
-                    if (metrics.poverty_rate_pct !== undefined) tooltipHtml += `<div class="county-stat">Poverty Rate: <span>${metrics.poverty_rate_pct}%</span></div>`;
-                    if (metrics.unemployment_rate_pct !== undefined) tooltipHtml += `<div class="county-stat">Unemployment: <span>${metrics.unemployment_rate_pct}%</span></div>`;
-                    if (metrics.population_density_per_sq_mile !== undefined) tooltipHtml += `<div class="county-stat">Pop Density: <span>${metrics.population_density_per_sq_mile.toLocaleString()}/sq mi</span></div>`;
-                    if (metrics.median_age_years !== undefined) tooltipHtml += `<div class="county-stat">Median Age: <span>${metrics.median_age_years}</span></div>`;
-                    if (metrics.percent_bachelors_degree_pct !== undefined) tooltipHtml += `<div class="county-stat">Bachelor's Degree: <span>${metrics.percent_bachelors_degree_pct}%</span></div>`;
-
-                    lyr.bindTooltip(tooltipHtml, {
-                        className: 'county-tooltip',
-                        sticky: true
-                    });
-
-                    // Click handler
                     lyr.on('click', () => handleCountyClick(fips, county, lyr));
-
-                    // Hover
                     lyr.on('mouseover', () => {
-                        lyr.setStyle({ fillOpacity: 0.6, weight: 2.5 });
+                        lyr.setStyle({ fillOpacity: 0.6, weight: 3, color: '#93c5fd' });
+                        showCountyInfo(county);
                     });
                     lyr.on('mouseout', () => {
                         if (!lyr._highlighted) {
-                            lyr.setStyle({ fillOpacity: 0.3, weight: 1.5 });
+                            lyr.setStyle({ fillOpacity: 0.35, weight: 2, color: '#60a5fa' });
                         }
+                        hideCountyInfo();
                     });
                 }
             }).addTo(map);
 
             countyLayers[fips] = layer;
 
-            // Collect bounds
-            const b = layer.getBounds();
-            bounds.push(b);
+            // Add county name label on the map
+            const center = layer.getBounds().getCenter();
+            const label = L.marker(center, {
+                icon: L.divIcon({
+                    className: 'county-label',
+                    html: `<div style="color:#e2e8f0; font-size:11px; font-weight:600; text-shadow: 0 1px 4px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.7); white-space:nowrap; pointer-events:none; text-align:center;">${county.name}</div>`,
+                    iconSize: [0, 0],
+                    iconAnchor: [0, 0]
+                }),
+                interactive: false
+            }).addTo(map);
+            countyLabels.push(label);
+
+            bounds.push(layer.getBounds());
         } else {
-            // No GeoJSON boundary — show as circle marker
+            // Fallback circle marker
             const marker = L.circleMarker([county.latitude, county.longitude], {
-                radius: 12,
+                radius: 14,
                 fillColor: '#3b82f6',
                 fillOpacity: 0.4,
                 color: '#60a5fa',
-                weight: 1.5
+                weight: 2
             }).addTo(map);
 
-            const metrics = county.metrics;
-            let tooltipHtml = `<div class="county-name">${county.name}, ${county.state}</div>`;
-            if (metrics.median_income !== undefined) tooltipHtml += `<div class="county-stat">Median Income: <span>$${metrics.median_income.toLocaleString()}</span></div>`;
-            if (metrics.poverty_rate_pct !== undefined) tooltipHtml += `<div class="county-stat">Poverty Rate: <span>${metrics.poverty_rate_pct}%</span></div>`;
-            if (metrics.unemployment_rate_pct !== undefined) tooltipHtml += `<div class="county-stat">Unemployment: <span>${metrics.unemployment_rate_pct}%</span></div>`;
-            if (metrics.population_density_per_sq_mile !== undefined) tooltipHtml += `<div class="county-stat">Pop Density: <span>${metrics.population_density_per_sq_mile.toLocaleString()}/sq mi</span></div>`;
-            if (metrics.median_age_years !== undefined) tooltipHtml += `<div class="county-stat">Median Age: <span>${metrics.median_age_years}</span></div>`;
-            if (metrics.percent_bachelors_degree_pct !== undefined) tooltipHtml += `<div class="county-stat">Bachelor's Degree: <span>${metrics.percent_bachelors_degree_pct}%</span></div>`;
-
-            marker.bindTooltip(tooltipHtml, { className: 'county-tooltip', sticky: true });
             marker.on('click', () => handleCountyClick(fips, county, marker));
+            marker.on('mouseover', () => showCountyInfo(county));
+            marker.on('mouseout', () => hideCountyInfo());
+
+            // Label
+            const label = L.marker([county.latitude, county.longitude], {
+                icon: L.divIcon({
+                    className: 'county-label',
+                    html: `<div style="color:#e2e8f0; font-size:11px; font-weight:600; text-shadow: 0 1px 4px rgba(0,0,0,0.9); white-space:nowrap; pointer-events:none;">${county.name}</div>`,
+                    iconSize: [0, 0],
+                    iconAnchor: [0, -16]
+                }),
+                interactive: false
+            }).addTo(map);
+            countyLabels.push(label);
 
             countyLayers[fips] = marker;
             bounds.push(L.latLng(county.latitude, county.longitude));
@@ -666,10 +710,10 @@ function renderCluster(cluster) {
             if (b.getBounds) combined.extend(b.getBounds());
             else combined.extend(b);
         });
-        map.fitBounds(combined, { padding: [40, 40], maxZoom: 10 });
+        map.fitBounds(combined, { padding: [50, 50], maxZoom: 9 });
     }
 
-    // Allow zoom in within bounds but not panning
+    // Allow zoom but not pan
     map.options.minZoom = map.getZoom() - 1;
     map.scrollWheelZoom.enable();
     map.touchZoom.enable();
