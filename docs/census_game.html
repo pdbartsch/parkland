@@ -103,21 +103,14 @@
             height: 100%;
         }
 
-        /* Question panel - floating on map */
+        /* Question panel - fixed bar above map */
         #question-panel {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(12px);
-            border: 2px solid #0ea5e9;
-            border-radius: 16px;
-            padding: 16px 24px;
+            background: #0f172a;
+            border-bottom: 2px solid #0ea5e9;
+            padding: 12px 20px;
+            flex-shrink: 0;
             z-index: 1000;
-            max-width: 600px;
-            width: calc(100% - 40px);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(14, 165, 233, 0.15);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5), 0 0 12px rgba(14, 165, 233, 0.1);
         }
 
         .question-meta {
@@ -405,7 +398,6 @@
 </header>
 
 <main>
-    <div id="map"></div>
     <section id="question-panel">
         <div class="question-meta">
             <span class="tier-badge" id="tier-badge">TIER 1</span>
@@ -414,6 +406,7 @@
         <div id="question-text">Loading...</div>
         <div id="hint-text">Click a county on the map</div>
     </section>
+    <div id="map"></div>
 </main>
 
 <!-- County info panel (shown on hover) -->
