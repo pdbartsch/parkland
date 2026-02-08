@@ -1,14 +1,2 @@
-__pycache__/
-*.pyc 
-parklandapp/__pycache__/*
-
-# Environment
 .env
-env
-venv
-app.yaml
-
-.vscode/settings.json
-
-instance/
-app.yaml
+.vscode/
