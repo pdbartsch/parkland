@@ -1,13 +1,12 @@
 # [parkland.dev](https://parkland.dev/)
 
-# [alternate](https://kindergarten-sight-words-3bf91.appspot.com/)
+A static site hosted on GitHub Pages with games and visualizations for kids.
 
-## [gcloud](https://gist.github.com/pydevops/cffbd3c694d599c6ca18342d3625af97)
+## Pages
+- **Home** - Landing page
+- **Games** - Sum Smash math game
+- **Visualizations** - 3D Election Map
+- **Box2Box** - Coming soon
 
-- gcloud app deploy
-- gcloud app update
-- gcloud app browse
-- gcloud auth list
-- gcloud config set account `ACCOUNT`
-- gcloud projects list
-- gcloud config set project `PROJECT NAME`
+## Development
+The site is plain HTML/CSS/JS in the `docs/` folder. Push to `main` triggers automatic deployment via GitHub Actions.
