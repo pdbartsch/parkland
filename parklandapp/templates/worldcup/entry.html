@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fill Your Bracket — 2026 World Cup Pool</title>
+<link rel="stylesheet" href="css/bracket.css">
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+</head>
+<body>
+
+<nav>
+  <span class="logo">World Cup 2026</span>
+  <a href="index.html">Leaderboard</a>
+  <a href="entry.html" class="active">Fill Bracket</a>
+  <a href="admin.html">Admin</a>
+  <a href="analysis.html">Analysis</a>
+</nav>
+
+<!-- Access gate -->
+<div id="access-gate" style="display:flex;align-items:center;justify-content:center;height:calc(100vh - 44px);">
+  <div style="text-align:center;background:var(--card);padding:40px;border-radius:12px;border:1px solid var(--border);max-width:360px;">
+    <h2 style="color:var(--accent);margin-bottom:6px;">Enter Access Code</h2>
+    <p style="color:var(--muted);font-size:0.85em;margin-bottom:20px;">You need a code to fill in a bracket.</p>
+    <input type="text" id="access-code" placeholder="code" maxlength="6"
+           style="width:200px;padding:10px;text-align:center;font-size:1.2em;letter-spacing:3px;
+                  border:2px solid var(--border);border-radius:6px;font-family:var(--font-mono);"
+           autocomplete="off" spellcheck="false">
+    <div id="access-error" style="color:#c62828;font-size:0.8em;margin-top:8px;min-height:1.2em;"></div>
+    <button class="btn btn-primary" id="btn-access" style="margin-top:12px;padding:10px 32px;">
+      Enter
+    </button>
+  </div>
+</div>
+
+<div id="entry-content" style="display:none;">
+<div class="page-header">
+  <h1>Fill Your Bracket</h1>
+  <p class="subtitle">Drag countries onto the bracket or click a slot to type in</p>
+</div>
+
+<div class="entry-layout">
+  <!-- Left: Country tiles -->
+  <div class="tile-palette" id="tile-palette"></div>
+
+  <!-- Center: Interactive bracket -->
+  <div class="bracket-area" id="bracket-area"></div>
+
+  <!-- Right: Actions & progress -->
+  <div class="actions-panel">
+    <div class="action-card">
+      <h3>Your Info</h3>
+      <label style="font-size:0.75em;color:var(--muted);display:block;margin-bottom:2px;">Full Name (private)</label>
+      <input type="text" id="name-input" placeholder="Your real name"
+             style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;font-size:0.85em;margin-bottom:8px;">
+      <label style="font-size:0.75em;color:var(--muted);display:block;margin-bottom:2px;">Public Nickname (shown on site)</label>
+      <input type="text" id="nickname-input" placeholder="Display name"
+             style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;font-size:0.85em;">
+      <div style="margin-top:6px;font-size:0.7em;color:var(--muted);">
+        Your ID: <code id="entry-id" style="font-family:var(--font-mono);color:var(--accent);"></code>
+      </div>
+    </div>
+
+    <div class="action-card">
+      <h3>Progress</h3>
+      <div class="stat" id="progress-count">0/32</div>
+      <div class="stat-label">Round of 32 slots filled</div>
+      <div style="margin-top:8px;">
+        <span class="stat" style="font-size:1.1em;" id="total-picks">0</span>
+        <span class="stat-label"> total picks</span>
+      </div>
+    </div>
+
+    <div class="action-card">
+      <h3>Actions</h3>
+      <button class="btn btn-primary" id="btn-export" disabled style="width:100%;margin-bottom:8px;">
+        Submit Bracket
+      </button>
+      <button class="btn btn-secondary" id="btn-clear" style="width:100%;">
+        Clear All
+      </button>
+    </div>
+
+    <div class="action-card">
+      <h3>How to Play</h3>
+      <ul style="font-size:0.78em;color:var(--muted);padding-left:16px;line-height:1.5;">
+        <li>Drag a country from the left panel onto a bracket slot</li>
+        <li>Or click any slot to type a country name</li>
+        <li>Fill all 32 first-round slots, then pick winners through the final</li>
+        <li>Pick your champion</li>
+        <li>Click Submit to copy your entry</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div><!-- end entry-content -->
+
+<script>
+// Simple access gate — code is hashed so it's not plaintext in source
+// To change the code, update the hash below (SHA-256 of the 6-char code)
+const ACCESS_HASH = '6ca13d52ca70c883e0f0bb101e425a89e8624de51db2d2392593af6a84118090'; // placeholder — set during setup
+
+async function sha256(text) {
+  const buf = await crypto.subtle.digest('SHA-256',
+    new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf), b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function checkAccess() {
+  // Already authenticated this session?
+  if (sessionStorage.getItem('bracket-access') === 'granted') {
+    showEntry();
+    return;
+  }
+
+  document.getElementById('btn-access').addEventListener('click', tryCode);
+  document.getElementById('access-code').addEventListener('keydown', e => {
+    if (e.key === 'Enter') tryCode();
+  });
+  document.getElementById('access-code').focus();
+}
+
+async function tryCode() {
+  const code = document.getElementById('access-code').value.trim();
+  if (!code) return;
+
+  const hash = await sha256(code);
+  if (hash === ACCESS_HASH) {
+    sessionStorage.setItem('bracket-access', 'granted');
+    showEntry();
+  } else {
+    document.getElementById('access-error').textContent = 'Invalid code. Try again.';
+    document.getElementById('access-code').select();
+  }
+}
+
+function showEntry() {
+  document.getElementById('access-gate').style.display = 'none';
+  document.getElementById('entry-content').style.display = 'block';
+  // Dynamically load the entry app module
+  const script = document.createElement('script');
+  script.type = 'module';
+  script.src = 'js/entry-app.js';
+  document.body.appendChild(script);
+}
+
+checkAccess();
+</script>
+</body>
+</html>

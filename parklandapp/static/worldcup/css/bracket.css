@@ -1,0 +1,298 @@
+/* Shared styles for World Cup bracket pool */
+:root {
+  --bg: #f5f5f0;
+  --card: #ffffff;
+  --border: #e0e0e0;
+  --text: #222;
+  --muted: #777;
+  --accent: #1a5f2a;
+  --accent-light: #e8f5e9;
+  --gold: #d4a937;
+  --gold-light: #fff8dc;
+  --silver: #999;
+  --bronze: #b87333;
+  --slot-fill: #fff;
+  --slot-stroke: #333;
+  --slot-hover: #e8f5e9;
+  --slot-active: #c8e6c9;
+  --connector: #333;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "Consolas", "Monaco", monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Navigation */
+nav {
+  background: var(--accent);
+  padding: 0 20px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+nav a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.9em;
+  padding: 4px 10px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+nav a:hover, nav a.active {
+  background: rgba(255,255,255,0.15);
+}
+nav .logo {
+  font-weight: bold;
+  font-size: 1.1em;
+  margin-right: auto;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  line-height: 1;
+}
+
+/* Page header */
+.page-header {
+  text-align: center;
+  padding: 20px 20px 12px;
+}
+.page-header h1 {
+  font-size: 1.5em;
+  color: var(--accent);
+}
+.page-header .subtitle {
+  color: var(--muted);
+  font-size: 0.85em;
+  margin-top: 4px;
+}
+
+/* Entry page layout */
+.entry-layout {
+  display: flex;
+  gap: 16px;
+  padding: 0 16px 16px;
+  height: calc(100vh - 120px);
+  min-height: 600px;
+}
+
+/* Tile palette (left panel) */
+.tile-palette {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow-y: auto;
+  padding: 8px;
+}
+.tile-palette h3 {
+  font-size: 0.85em;
+  color: var(--accent);
+  padding: 6px 4px;
+  margin: 0;
+}
+
+.group-section {
+  margin-bottom: 8px;
+}
+.group-label {
+  font-size: 0.75em;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 4px 6px 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Country tile */
+.country-tile {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  margin: 2px 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.82em;
+  cursor: grab;
+  user-select: none;
+  transition: all 0.12s;
+}
+.country-tile:hover {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+.country-tile:active {
+  cursor: grabbing;
+}
+.country-tile.placed {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
+.country-tile .group-tag {
+  font-size: 0.7em;
+  color: var(--muted);
+  background: #f0f0ec;
+  padding: 1px 4px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* Bracket area */
+.bracket-area {
+  flex: 1;
+  overflow: auto;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+/* SVG bracket styles */
+.bracket-slot {
+  cursor: pointer;
+  transition: fill 0.12s;
+}
+.bracket-slot:hover {
+  fill: var(--slot-hover);
+}
+.bracket-slot.drop-target {
+  fill: var(--slot-active);
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+.bracket-slot.filled {
+  fill: var(--accent-light);
+}
+.bracket-slot-text {
+  pointer-events: none;
+  font-family: var(--font);
+  font-size: 11px;
+  fill: var(--text);
+}
+.bracket-slot-label {
+  pointer-events: none;
+  font-family: var(--font);
+  font-size: 8px;
+  fill: var(--muted);
+}
+.connector-line {
+  stroke: var(--connector);
+  stroke-width: 1.2;
+  fill: none;
+  pointer-events: none;
+}
+
+/* Right panel — actions */
+.actions-panel {
+  width: 220px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.action-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+.action-card h3 {
+  font-size: 0.85em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.action-card .stat {
+  font-size: 1.4em;
+  font-weight: bold;
+  color: var(--accent);
+}
+.action-card .stat-label {
+  font-size: 0.75em;
+  color: var(--muted);
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover { background: #145224; }
+.btn-primary:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+.btn-secondary {
+  background: var(--card);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+.btn-secondary:hover { background: var(--accent-light); }
+
+/* Type-in input */
+.type-in-input {
+  position: absolute;
+  width: 140px;
+  padding: 4px 6px;
+  font-size: 11px;
+  border: 2px solid var(--accent);
+  border-radius: 3px;
+  outline: none;
+  z-index: 100;
+}
+.type-in-list {
+  position: absolute;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 101;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.type-in-list .option {
+  padding: 4px 8px;
+  font-size: 11px;
+  cursor: pointer;
+}
+.type-in-list .option:hover {
+  background: var(--accent-light);
+}
+
+/* Champion section */
+.champion-area {
+  text-align: center;
+}
+.champion-box {
+  display: inline-block;
+  background: var(--gold-light);
+  border: 2px solid var(--gold);
+  border-radius: 8px;
+  padding: 12px 24px;
+  margin-top: 8px;
+}
+.champion-box .label {
+  font-size: 0.7em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: bold;
+  letter-spacing: 1px;
+}
