@@ -179,7 +179,7 @@
 <script>
 async function loadStandings() {
   try {
-    const resp = await fetch('standings.json');
+    const resp = await fetch('data/standings.json');
     if (!resp.ok) throw new Error('No standings yet');
     return await resp.json();
   } catch {

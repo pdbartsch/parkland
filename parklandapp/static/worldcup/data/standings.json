@@ -1,0 +1,57 @@
+{
+  "last_updated": "2026-04-02 10:51",
+  "results_through": "",
+  "scoring": {
+    "points_per_round": {
+      "R32": 1,
+      "R16": 2,
+      "QF": 4,
+      "SF": 8,
+      "Final": 16
+    },
+    "champion_bonus": 10,
+    "payout": {
+      "1st": "60%",
+      "2nd": "25%",
+      "3rd": "15%"
+    }
+  },
+  "standings": [
+    {
+      "name": "Example Player",
+      "nickname": "Example Player",
+      "entry_type": "32-team",
+      "total": 0,
+      "champion_bonus": 0,
+      "champion_pick": "1A",
+      "breakdown": {
+        "R32": {
+          "correct": 0,
+          "possible": 0,
+          "points": 0
+        },
+        "R16": {
+          "correct": 0,
+          "possible": 0,
+          "points": 0
+        },
+        "QF": {
+          "correct": 0,
+          "possible": 0,
+          "points": 0
+        },
+        "SF": {
+          "correct": 0,
+          "possible": 0,
+          "points": 0
+        },
+        "Final": {
+          "correct": 0,
+          "possible": 0,
+          "points": 0
+        }
+      },
+      "rank": 1
+    }
+  ]
+}
