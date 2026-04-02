@@ -277,6 +277,14 @@ nav .logo {
   background: var(--accent-light);
 }
 
+/* Group highlight during drag */
+.bracket-slot.group-highlight {
+  fill: var(--gold-light);
+  stroke: var(--gold);
+  stroke-width: 2;
+  stroke-dasharray: 4 2;
+}
+
 /* Champion section */
 .champion-area {
   text-align: center;

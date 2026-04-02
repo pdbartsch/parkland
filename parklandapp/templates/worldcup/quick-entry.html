@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quick Bracket — 2026 World Cup Pool</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='worldcup/css/bracket.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+</head>
+<body>
+
+<nav>
+  <span class="logo">ParkLand</span>
+  <a href="{{ url_for('main.home') }}">Home</a>
+  <a href="{{ url_for('worldcup.index') }}">World Cup</a>
+  <a href="{{ url_for('worldcup.entry') }}" class="active">Fill Bracket</a>
+</nav>
+
+<!-- Access gate -->
+<div id="access-gate" style="display:flex;align-items:center;justify-content:center;height:calc(100vh - 44px);">
+  <div style="text-align:center;background:var(--card);padding:40px;border-radius:12px;border:1px solid var(--border);max-width:360px;">
+    <h2 style="color:var(--accent);margin-bottom:6px;">Enter Access Code</h2>
+    <p style="color:var(--muted);font-size:0.85em;margin-bottom:20px;">You need a code to fill in a bracket.</p>
+    <input type="text" id="access-code" placeholder="code" maxlength="6"
+           style="width:200px;padding:10px;text-align:center;font-size:1.2em;letter-spacing:3px;
+                  border:2px solid var(--border);border-radius:6px;font-family:var(--font-mono);"
+           autocomplete="off" spellcheck="false">
+    <div id="access-error" style="color:#c62828;font-size:0.8em;margin-top:8px;min-height:1.2em;"></div>
+    <button class="btn btn-primary" id="btn-access" style="margin-top:12px;padding:10px 32px;">
+      Enter
+    </button>
+  </div>
+</div>
+
+<div id="entry-content" style="display:none;">
+
+<!-- Full-width bracket -->
+<div class="bracket-area" id="bracket-area" style="width:100%;overflow-x:auto;overflow-y:hidden;display:flex;justify-content:center;border:none;border-radius:0;background:transparent;" oncontextmenu="return false;"></div>
+
+<!-- Bottom bar — right below bracket -->
+<div style="
+  background:var(--card); border-top:1px solid var(--border);
+  padding:8px 20px;
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  font-size:0.82em;
+">
+  <span style="color:var(--accent);font-weight:700;font-size:0.9em;white-space:nowrap;">Quick Bracket</span>
+  <span style="color:var(--muted);font-size:0.75em;white-space:nowrap;">Click to advance / Right-click to undo</span>
+  <span style="flex:1;"></span>
+  <input type="text" id="name-input" placeholder="Full name"
+         style="width:200px;padding:6px 10px;border:1px solid var(--border);border-radius:4px;font-size:0.95em;">
+  <input type="text" id="nickname-input" placeholder="Nickname"
+         style="width:160px;padding:6px 10px;border:1px solid var(--border);border-radius:4px;font-size:0.95em;">
+  <span style="color:var(--muted);font-size:0.75em;white-space:nowrap;">
+    ID: <code id="entry-id" style="font-family:var(--font-mono);color:var(--accent);"></code>
+  </span>
+  <span style="color:var(--accent);font-weight:700;white-space:nowrap;">
+    <span id="total-picks">0</span> picks
+  </span>
+  <button class="btn btn-primary" id="btn-export" disabled style="padding:5px 16px;font-size:0.85em;">Submit</button>
+  <button class="btn btn-secondary" id="btn-clear" style="padding:5px 12px;font-size:0.85em;">Reset</button>
+</div>
+
+</div>
+
+<script>
+const ACCESS_HASH = '6ca13d52ca70c883e0f0bb101e425a89e8624de51db2d2392593af6a84118090';
+async function sha256(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf), b => b.toString(16).padStart(2, '0')).join('');
+}
+async function checkAccess() {
+  if (sessionStorage.getItem('bracket-access') === 'granted') { showEntry(); return; }
+  document.getElementById('btn-access').addEventListener('click', tryCode);
+  document.getElementById('access-code').addEventListener('keydown', e => { if (e.key === 'Enter') tryCode(); });
+  document.getElementById('access-code').focus();
+}
+async function tryCode() {
+  const code = document.getElementById('access-code').value.trim();
+  if (!code) return;
+  if (await sha256(code) === ACCESS_HASH) { sessionStorage.setItem('bracket-access', 'granted'); showEntry(); }
+  else { document.getElementById('access-error').textContent = 'Invalid code.'; document.getElementById('access-code').select(); }
+}
+function showEntry() {
+  document.getElementById('access-gate').style.display = 'none';
+  document.getElementById('entry-content').style.display = 'block';
+  const s = document.createElement('script'); s.type = 'module'; s.src = 'js/quick-entry-app.js'; document.body.appendChild(s);
+}
+checkAccess();
+</script>
+</body>
+</html>

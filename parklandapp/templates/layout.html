@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='worldcup/css/bracket.css') }}">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  {% if title %}
+  <title>ParkLand - {{ title }}</title>
+  {% else %}
+  <title>ParkLand</title>
+  {% endif %}
+</head>
+
+<body>
+
+<nav>
+  <span class="logo">ParkLand</span>
+  <a href="{{ url_for('main.home') }}" {% if request.endpoint == 'main.home' %}class="active"{% endif %}>Home</a>
+  <a href="{{ url_for('games.index') }}" {% if request.endpoint and request.endpoint.startswith('games.') %}class="active"{% endif %}>Games</a>
+  <a href="{{ url_for('visualizations.index') }}" {% if request.endpoint and request.endpoint.startswith('visualizations.') %}class="active"{% endif %}>Visualizations</a>
+  <a href="{{ url_for('worldcup.index') }}" {% if request.endpoint and request.endpoint.startswith('worldcup.') %}class="active"{% endif %}>World Cup</a>
+</nav>
+
+<main style="max-width: 900px; margin: 0 auto; padding: 20px;">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  {% for category, message in messages %}
+  <div style="padding: 10px 16px; margin-bottom: 12px; border-radius: 6px; background: var(--accent-light); color: var(--accent); font-size: 0.9em;">
+    {{ message }}
+  </div>
+  {% endfor %}
+  {% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+
+</body>
+</html>

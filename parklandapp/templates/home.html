@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block content %}
+<div style="display:flex; align-items:center; justify-content:center; height:calc(100vh - 44px);">
+  <svg viewBox="0 0 400 300" style="width:80vw; height:80vh; max-width:80vw;" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+    <!-- Abstract landscape with geometric shapes -->
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#e8f5e9"/>
+        <stop offset="100%" stop-color="#c8e6c9"/>
+      </linearGradient>
+      <linearGradient id="glow" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#d4a937" stop-opacity="0.6"/>
+        <stop offset="100%" stop-color="#1a5f2a" stop-opacity="0.3"/>
+      </linearGradient>
+    </defs>
+    <rect width="400" height="300" rx="12" fill="url(#sky)"/>
+    <!-- Circles -->
+    <circle cx="80" cy="120" r="45" fill="#1a5f2a" opacity="0.15"/>
+    <circle cx="200" cy="80" r="60" fill="#d4a937" opacity="0.12"/>
+    <circle cx="320" cy="140" r="35" fill="#1a5f2a" opacity="0.2"/>
+    <circle cx="150" cy="200" r="25" fill="#b87333" opacity="0.15"/>
+    <!-- Triangles -->
+    <polygon points="260,220 300,150 340,220" fill="#1a5f2a" opacity="0.1"/>
+    <polygon points="60,260 110,190 160,260" fill="#d4a937" opacity="0.1"/>
+    <!-- Lines -->
+    <line x1="40" y1="180" x2="360" y2="180" stroke="#1a5f2a" stroke-width="0.5" opacity="0.2"/>
+    <line x1="40" y1="220" x2="360" y2="220" stroke="#1a5f2a" stroke-width="0.5" opacity="0.15"/>
+    <line x1="40" y1="260" x2="360" y2="260" stroke="#1a5f2a" stroke-width="0.5" opacity="0.1"/>
+    <!-- Accent dot cluster -->
+    <circle cx="300" cy="60" r="4" fill="#d4a937" opacity="0.5"/>
+    <circle cx="315" cy="55" r="3" fill="#d4a937" opacity="0.4"/>
+    <circle cx="308" cy="72" r="2.5" fill="#d4a937" opacity="0.35"/>
+    <circle cx="290" cy="50" r="2" fill="#1a5f2a" opacity="0.4"/>
+    <!-- Large ring -->
+    <circle cx="200" cy="150" r="80" fill="none" stroke="url(#glow)" stroke-width="2" opacity="0.4"/>
+    <circle cx="200" cy="150" r="55" fill="none" stroke="#1a5f2a" stroke-width="0.8" opacity="0.15"/>
+  </svg>
+</div>
+{% endblock content %}

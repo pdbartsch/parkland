@@ -3,5 +3,6 @@ app.yaml
 .vscode/
 __pycache__/
 *.pyc
-parklandapp/
+env/
+instance/
 tests/

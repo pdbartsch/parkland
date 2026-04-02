@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — World Cup Bracket Pool</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='worldcup/css/bracket.css') }}">
+<style>
+  body { max-width: 900px; margin: 0 auto; padding: 20px; }
+  .admin-header { text-align: center; padding: 20px 0 16px; border-bottom: 2px solid var(--accent); margin-bottom: 20px; }
+  .admin-header h1 { font-size: 1.5em; color: var(--accent); }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  th { background: var(--accent); color: white; padding: 10px 12px; text-align: left; font-size: 0.85em; font-weight: 600; }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 0.88em; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover { background: #f9f9f5; }
+  .paid-yes { color: var(--accent); font-weight: 600; cursor: pointer; }
+  .paid-no { color: #c62828; cursor: pointer; }
+  .btn-sm { padding: 4px 10px; font-size: 0.78em; border: none; border-radius: 4px; cursor: pointer; }
+  .btn-toggle { background: var(--accent-light); color: var(--accent); }
+  .btn-toggle:hover { background: var(--accent); color: #fff; }
+  .btn-delete { background: #ffebee; color: #c62828; }
+  .btn-delete:hover { background: #c62828; color: #fff; }
+  .summary { display: flex; gap: 24px; margin-bottom: 16px; font-size: 0.9em; }
+  .summary .num { font-weight: 700; color: var(--accent); font-size: 1.4em; }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="logo">ParkLand</span>
+  <a href="{{ url_for('worldcup.index') }}">World Cup</a>
+  <a href="{{ url_for('worldcup.entry') }}">Fill Bracket</a>
+  <a href="{{ url_for('worldcup.admin') }}" class="active">Admin</a>
+</nav>
+
+<!-- Password gate -->
+<div id="gate" style="display:flex;align-items:center;justify-content:center;height:calc(100vh - 44px);">
+  <div style="text-align:center;background:var(--card);padding:40px;border-radius:12px;border:1px solid var(--border);max-width:360px;">
+    <h2 style="color:var(--accent);margin-bottom:6px;">Admin Access</h2>
+    <input type="password" id="admin-pw" placeholder="Password"
+           style="width:200px;padding:10px;text-align:center;font-size:1.1em;border:2px solid var(--border);border-radius:6px;"
+           autocomplete="off">
+    <div id="pw-error" style="color:#c62828;font-size:0.8em;margin-top:8px;min-height:1.2em;"></div>
+    <button class="btn btn-primary" id="btn-pw" style="margin-top:12px;padding:10px 32px;">Enter</button>
+  </div>
+</div>
+
+<div id="admin-content" style="display:none;">
+  <div class="admin-header">
+    <h1>Bracket Pool Admin</h1>
+  </div>
+  <div class="summary" id="summary"></div>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Nickname</th>
+        <th>Champion</th>
+        <th>Submitted</th>
+        <th>Paid</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="admin-body"></tbody>
+  </table>
+</div>
+
+<script>
+const ADMIN_HASH = '6ca13d52ca70c883e0f0bb101e425a89e8624de51db2d2392593af6a84118090'; // abc123
+
+async function sha256(text) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf), b => b.toString(16).padStart(2, '0')).join('');
+}
+
+document.getElementById('btn-pw').addEventListener('click', tryPw);
+document.getElementById('admin-pw').addEventListener('keydown', e => { if (e.key === 'Enter') tryPw(); });
+document.getElementById('admin-pw').focus();
+
+if (sessionStorage.getItem('admin-access') === 'granted') showAdmin();
+
+async function tryPw() {
+  const pw = document.getElementById('admin-pw').value.trim();
+  if (!pw) return;
+  if (await sha256(pw) === ADMIN_HASH) {
+    sessionStorage.setItem('admin-access', 'granted');
+    showAdmin();
+  } else {
+    document.getElementById('pw-error').textContent = 'Wrong password.';
+  }
+}
+
+function showAdmin() {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('admin-content').style.display = 'block';
+  loadEntries();
+}
+
+async function loadEntries() {
+  const resp = await fetch('/worldcup/api/admin/entries');
+  const data = await resp.json();
+  renderEntries(data.entries);
+}
+
+function renderEntries(entries) {
+  const tbody = document.getElementById('admin-body');
+  const summary = document.getElementById('summary');
+  const paid = entries.filter(e => e.paid).length;
+
+  summary.innerHTML = `
+    <div><span class="num">${entries.length}</span> entries</div>
+    <div><span class="num">${paid}</span> paid</div>
+    <div><span class="num">${entries.length - paid}</span> unpaid</div>
+  `;
+
+  tbody.innerHTML = '';
+  entries.forEach((e, i) => {
+    const paidClass = e.paid ? 'paid-yes' : 'paid-no';
+    const paidText = e.paid ? 'Paid' : 'Unpaid';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${i + 1}</td>
+      <td>${e.name}</td>
+      <td>${e.nickname}</td>
+      <td>${e.champion}</td>
+      <td style="font-size:0.8em;color:var(--muted);">${e.submitted}</td>
+      <td><span class="${paidClass}" data-id="${e.id}" onclick="togglePaid('${e.id}')">${paidText}</span></td>
+      <td>
+        <button class="btn-sm btn-toggle" onclick="togglePaid('${e.id}')">Toggle Paid</button>
+        <button class="btn-sm btn-delete" onclick="deleteEntry('${e.id}', '${e.nickname}')">Delete</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+async function togglePaid(id) {
+  await fetch(`/worldcup/api/admin/toggle-paid/${id}`, { method: 'POST' });
+  loadEntries();
+}
+
+async function deleteEntry(id, nickname) {
+  if (!confirm(`Delete bracket for "${nickname}" (${id})? This cannot be undone.`)) return;
+  await fetch(`/worldcup/api/admin/delete/${id}`, { method: 'DELETE' });
+  loadEntries();
+}
+</script>
+</body>
+</html>
