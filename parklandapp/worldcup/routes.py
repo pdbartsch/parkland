@@ -34,7 +34,7 @@ def _get_entry(entry_id):
 def _put_entry(entry_dict):
     """Write an entry to Datastore. Uses entry['id'] as the key."""
     key = ds.key("BracketEntry", entry_dict["id"])
-    entity = datastore.Entity(key=key, exclude_from_indexes=("picks",))
+    entity = datastore.Entity(key=key, exclude_from_indexes=("picks", "group_rankings", "third_place_qualifiers"))
     entity.update(entry_dict)
     ds.put(entity)
 
@@ -131,6 +131,12 @@ def submit_entry():
         "picks": body["picks"],
         "champion": str(body["champion"]).strip(),
     }
+
+    # Group stage bracket entries include extra fields
+    if "group_rankings" in body:
+        entry["group_rankings"] = body["group_rankings"]
+    if "third_place_qualifiers" in body:
+        entry["third_place_qualifiers"] = body["third_place_qualifiers"]
 
     if not entry["id"] or not entry["name"] or not entry["nickname"]:
         return jsonify({"error": "Name, nickname, and ID are required"}), 400

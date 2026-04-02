@@ -42,7 +42,7 @@ export class BracketRenderer {
     const matchupHeight = CFG.slotHeight * 2 + CFG.slotGap;
     const vertPitchR0 = matchupHeight + 16;
 
-    const pageH = CFG.marginTop + 40 + r0Count * vertPitchR0;
+    const pageH = CFG.marginTop + 40 + r0Count * vertPitchR0 + 80; // extra space for champion box below final
     const contentW = numHalfRounds * colWidth * 2 + CFG.slotWidth + CFG.roundGap * 2;
     const pageW = CFG.marginLeft + CFG.marginRight + contentW;
     const centerX = pageW / 2;
@@ -205,16 +205,34 @@ export class BracketRenderer {
     const leftSfY = drawHalf(left, 1);
     const rightSfY = drawHalf(right, -1);
 
-    // Final match slots in center
+    // Final match — draw as a normal matchup (two slots close together) centered vertically
     const finalX = centerX - CFG.slotWidth / 2;
-    this._drawSlot('M103', 'top', finalX, leftSfY - CFG.slotHeight / 2, '');
-    this._drawSlot('M103', 'bot', finalX, rightSfY - CFG.slotHeight / 2, '');
+    const finalCenterY = (leftSfY + rightSfY) / 2;
+    const finalTopY = finalCenterY - CFG.slotGap / 2 - CFG.slotHeight;
+    const finalBotY = finalCenterY + CFG.slotGap / 2;
+    this._drawSlot('M103', 'top', finalX, finalTopY, '');
+    this._drawSlot('M103', 'bot', finalX, finalBotY, '');
 
-    // Champion box
+    // Connector lines from SF exits to final slots
+    const finalLeftEdge = finalX;
+    const finalRightEdge = finalX + CFG.slotWidth;
+    const finalTopMidY = finalTopY + CFG.slotHeight / 2;
+    const finalBotMidY = finalBotY + CFG.slotHeight / 2;
+
+    // Left SF → Final top slot (bend from sfY to final slot Y)
+    this.svg.append('line').attr('class', 'connector-line')
+      .attr('x1', finalLeftEdge).attr('y1', leftSfY)
+      .attr('x2', finalLeftEdge).attr('y2', finalTopMidY);
+    // Right SF → Final bot slot
+    this.svg.append('line').attr('class', 'connector-line')
+      .attr('x1', finalRightEdge).attr('y1', rightSfY)
+      .attr('x2', finalRightEdge).attr('y2', finalBotMidY);
+
+    // Champion box below the final matchup
     const champW = CFG.slotWidth + 20;
     const champH = 50;
     const champX = centerX - champW / 2;
-    const champY = (leftSfY + rightSfY) / 2 - champH / 2;
+    const champY = finalBotY + CFG.slotHeight + 16;
 
     this.svg.append('rect')
       .attr('x', champX).attr('y', champY)
@@ -231,6 +249,12 @@ export class BracketRenderer {
 
     // Champion pick slot
     this._drawSlot('champion', 'pick', champX + 10, champY + 26, '');
+
+    // Connector from final matchup down to champion box
+    const matchExitY = finalCenterY;
+    this.svg.append('line').attr('class', 'connector-line')
+      .attr('x1', centerX).attr('y1', finalBotY + CFG.slotHeight)
+      .attr('x2', centerX).attr('y2', champY);
 
     this.champTextEl = this.textElements['champion']?.pick;
   }

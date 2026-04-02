@@ -277,14 +277,6 @@ nav .logo {
   background: var(--accent-light);
 }
 
-/* Group highlight during drag */
-.bracket-slot.group-highlight {
-  fill: var(--gold-light);
-  stroke: var(--gold);
-  stroke-width: 2;
-  stroke-dasharray: 4 2;
-}
-
 /* Champion section */
 .champion-area {
   text-align: center;
@@ -303,4 +295,260 @@ nav .logo {
   color: var(--gold);
   font-weight: bold;
   letter-spacing: 1px;
+}
+
+/* --- Step wizard --- */
+.step-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  padding: 16px 20px 8px;
+}
+.step-indicator .step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 0.85em;
+  color: var(--muted);
+  font-weight: 600;
+  position: relative;
+}
+.step-indicator .step .step-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8em;
+  font-weight: bold;
+  background: var(--border);
+  color: var(--muted);
+}
+.step-indicator .step.active {
+  color: var(--accent);
+}
+.step-indicator .step.active .step-num {
+  background: var(--accent);
+  color: #fff;
+}
+.step-indicator .step.done .step-num {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+.step-indicator .step.done {
+  color: var(--accent);
+  opacity: 0.7;
+}
+.step-arrow {
+  color: var(--border);
+  font-size: 1.2em;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+}
+
+/* Step content area */
+.step-content {
+  padding: 0 20px 20px;
+}
+.step-nav {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+/* --- Group ranking cards (Step 1) --- */
+.group-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+@media (max-width: 800px) {
+  .group-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 560px) {
+  .group-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.group-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.group-card-header {
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.82em;
+  font-weight: 700;
+  padding: 6px 10px;
+  text-align: center;
+}
+
+.sortable-list {
+  padding: 4px;
+}
+.sortable-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  margin: 2px 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 0.82em;
+  cursor: grab;
+  user-select: none;
+  transition: all 0.12s;
+}
+.sortable-item:hover {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+.sortable-item:active {
+  cursor: grabbing;
+}
+.sortable-item.dragging {
+  opacity: 0.4;
+}
+.sortable-item.drag-over {
+  border-color: var(--accent);
+  border-style: dashed;
+  background: var(--accent-light);
+}
+
+.rank-number {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75em;
+  font-weight: bold;
+  background: var(--accent);
+  color: #fff;
+  flex-shrink: 0;
+}
+.team-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.drag-handle {
+  color: var(--muted);
+  font-size: 1em;
+  cursor: grab;
+  flex-shrink: 0;
+}
+
+.touch-clone {
+  position: fixed;
+  z-index: 1000;
+  opacity: 0.85;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  border-radius: 4px;
+}
+
+/* --- Third-place selector (Step 2) --- */
+.tp-header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+.tp-header h2 {
+  font-size: 1.2em;
+  color: var(--accent);
+}
+.tp-header .subtitle {
+  color: var(--muted);
+  font-size: 0.85em;
+  margin-top: 4px;
+}
+.tp-counter {
+  font-size: 1.4em;
+  font-weight: bold;
+  color: var(--accent);
+  margin-top: 8px;
+}
+
+.tp-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+@media (max-width: 700px) {
+  .tp-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.tp-card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+.tp-card:hover {
+  border-color: var(--accent);
+  background: var(--accent-light);
+}
+.tp-card.selected {
+  border-color: var(--accent);
+  background: var(--accent-light);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+.tp-group-tag {
+  font-size: 0.7em;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.tp-team-name {
+  font-size: 1em;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.tp-rank {
+  font-size: 0.75em;
+  color: var(--muted);
+}
+
+/* --- Knockout step (Step 3) --- */
+
+/* Bottom bar for knockout step */
+.knockout-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+/* R32 auto-filled slots — clickable to pick winner but not editable */
+.bracket-slot.locked {
+  fill: #f0f0ec;
+  cursor: pointer;
+}
+.bracket-slot.locked:hover {
+  fill: #e8e8e4;
 }

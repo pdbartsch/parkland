@@ -4,479 +4,272 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>2026 World Cup Bracket Pool</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='worldcup/css/bracket.css') }}">
-<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <style>
-  body { max-width: 1100px; margin: 0 auto; padding: 20px; }
-  header { text-align: center; padding: 24px 0 16px; border-bottom: 2px solid var(--accent); margin-bottom: 20px; }
-  header h1 { font-size: 1.8em; color: var(--accent); }
-  header .subtitle { color: var(--muted); font-size: 0.9em; margin-top: 4px; }
-  .no-results { text-align: center; padding: 40px; color: var(--muted); font-style: italic; }
-  footer { text-align: center; margin-top: 30px; padding: 16px; color: var(--muted); font-size: 0.75em; border-top: 1px solid var(--border); }
-
-  /* Dashboard grid */
-  .dash { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
-  .dash-wide { grid-column: 1 / -1; }
-  .dash-2col { grid-column: span 2; }
-  .card {
-    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
-    padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  :root {
+    --bg: #f5f5f0;
+    --card: #ffffff;
+    --border: #e0e0e0;
+    --text: #222;
+    --muted: #777;
+    --accent: #1a5f2a;
+    --gold: #d4a937;
+    --silver: #999;
+    --bronze: #b87333;
   }
-  .card h3 { font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin: 0 0 8px; }
-  .big-num { font-size: 3.2em; font-weight: 800; color: var(--accent); line-height: 1; }
-  .big-label { font-size: 0.8em; color: var(--muted); margin-top: 4px; }
-  .big-sub { font-size: 1.1em; font-weight: 600; color: var(--text); margin-top: 2px; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  header {
+    text-align: center;
+    padding: 30px 0 20px;
+    border-bottom: 2px solid var(--accent);
+    margin-bottom: 24px;
+  }
+  header h1 {
+    font-size: 1.8em;
+    color: var(--accent);
+  }
+  header .subtitle {
+    color: var(--muted);
+    font-size: 0.9em;
+    margin-top: 6px;
+  }
+  .scoring-info {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 16px 0;
+    font-size: 0.85em;
+  }
+  .scoring-info .chip {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+  }
+  .scoring-info .chip strong { color: var(--accent); }
+  .updated {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8em;
+    margin-bottom: 20px;
+  }
+  .payout-bar {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin: 12px 0 20px;
+    font-size: 0.9em;
+  }
+  .payout-bar span { display: flex; align-items: center; gap: 4px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .dot-gold { background: var(--gold); }
+  .dot-silver { background: var(--silver); }
+  .dot-bronze { background: var(--bronze); }
 
-  /* Entries table */
-  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-  th { background: var(--accent); color: white; padding: 10px 12px; text-align: left; font-size: 0.85em; font-weight: 600; }
+  /* Leaderboard */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  th {
+    background: var(--accent);
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 0.85em;
+    font-weight: 600;
+  }
   th.num, td.num { text-align: center; }
-  td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 0.9em; }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9em;
+  }
   tr:last-child td { border-bottom: none; }
   tr:hover { background: #f9f9f5; }
-
-  /* Clickable rows */
-  tr.clickable { cursor: pointer; }
-  tr.clickable:hover { background: var(--accent-light); }
-
-  /* Modal */
-  .modal-overlay {
-    position: fixed; top:0; left:0; right:0; bottom:0; z-index:200;
-    background: rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center;
+  .rank-1 td:first-child { color: var(--gold); font-weight: bold; }
+  .rank-2 td:first-child { color: var(--silver); font-weight: bold; }
+  .rank-3 td:first-child { color: var(--bronze); font-weight: bold; }
+  .champ-pick {
+    font-size: 0.8em;
+    color: var(--muted);
+    display: block;
   }
-  .modal {
-    background: var(--card); border-radius: 12px; padding: 24px; max-width: 95vw; width: 95vw;
-    max-height: 90vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-    position: relative;
+  .expandable { cursor: pointer; }
+  .expandable td:first-child::before {
+    content: "\25B6";
+    font-size: 0.6em;
+    margin-right: 6px;
+    color: var(--muted);
   }
-  .modal-close {
-    position: absolute; top: 12px; right: 16px; background: none; border: none;
-    font-size: 1.4em; cursor: pointer; color: var(--muted); line-height: 1;
+  .expandable.open td:first-child::before { content: "\25BC"; }
+  .detail-row { display: none; }
+  .detail-row.open { display: table-row; }
+  .detail-row td {
+    padding: 8px 12px 12px 36px;
+    background: #fafaf6;
+    font-size: 0.82em;
+    color: var(--muted);
   }
-  .modal-close:hover { color: var(--text); }
-  .modal h2 { color: var(--accent); font-size: 1.2em; margin: 0 0 4px; }
-  .modal .champ-badge {
-    display: inline-block; background: var(--gold-light); border: 1px solid var(--gold);
-    border-radius: 20px; padding: 3px 14px; font-size: 0.85em; font-weight: 600; color: #8a6d00;
-    margin-bottom: 16px;
+  .entry-type-tag {
+    display: inline-block;
+    font-size: 0.65em;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 10px;
+    vertical-align: middle;
+    margin-left: 6px;
+    letter-spacing: 0.3px;
   }
-  .picks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .picks-round h4 { font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin: 0 0 6px; }
-  .picks-round .pick-item { font-size: 0.85em; padding: 2px 0; color: var(--text); }
-
-  @media (max-width: 700px) {
-    .dash { grid-template-columns: 1fr; }
-    .dash-2col { grid-column: span 1; }
-    .picks-grid { grid-template-columns: 1fr; }
+  .entry-type-tag.gs {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+  .entry-type-tag.t32 {
+    background: #f3e5f5;
+    color: #7b1fa2;
+  }
+  .no-results {
+    text-align: center;
+    padding: 40px;
+    color: var(--muted);
+    font-style: italic;
+  }
+  footer {
+    text-align: center;
+    margin-top: 30px;
+    padding: 16px;
+    color: var(--muted);
+    font-size: 0.75em;
+    border-top: 1px solid var(--border);
   }
 </style>
 </head>
 <body>
-
-<nav>
-  <span class="logo">ParkLand</span>
-  <a href="{{ url_for('main.home') }}">Home</a>
-  <a href="{{ url_for('games.index') }}">Games</a>
-  <a href="{{ url_for('visualizations.index') }}">Visualizations</a>
-  <a href="{{ url_for('worldcup.index') }}" class="active">World Cup</a>
-  <a href="{{ url_for('worldcup.entry') }}">Fill Bracket</a>
-</nav>
 
 <header>
   <h1>2026 World Cup Bracket Pool</h1>
   <p class="subtitle">May the best bracket win</p>
 </header>
 
+<div class="scoring-info" id="scoring-chips"></div>
+<div class="payout-bar" id="payout-bar"></div>
+<div class="updated" id="updated"></div>
+
 <div id="content">
-  <p class="no-results">Loading...</p>
+  <p class="no-results">Loading standings...</p>
 </div>
 
-<footer>Built for fun &mdash; not affiliated with FIFA</footer>
+<footer>
+  Built for fun &mdash; not affiliated with FIFA
+</footer>
 
 <script>
-const ACCENT = '#1a5f2a';
-const ACCENT2 = '#d4a937';
-const MUTED = '#999';
-const ROUNDS = ['R32','R16','QF','SF','Final','Champion'];
-const ROUND_COLORS = ['#c8e6c9','#a5d6a7','#81c784','#66bb6a','#4caf50','#d4a937'];
-
-async function loadEntries() {
-  try { const r = await fetch('/worldcup/api/entries'); return r.ok ? await r.json() : null; } catch { return null; }
-}
-async function loadStats() {
-  try { const r = await fetch('/worldcup/api/stats'); return r.ok ? await r.json() : null; } catch { return null; }
+async function loadStandings() {
+  try {
+    const resp = await fetch('standings.json');
+    if (!resp.ok) throw new Error('No standings yet');
+    return await resp.json();
+  } catch {
+    return null;
+  }
 }
 
-function renderDashboard(entries, stats) {
+function renderScoring(scoring) {
+  const chips = document.getElementById('scoring-chips');
+  const pts = scoring.points_per_round;
+  chips.innerHTML = Object.entries(pts).map(([round, val]) =>
+    `<span class="chip"><strong>${val}pt</strong>&nbsp;${round}</span>`
+  ).join('') + `<span class="chip"><strong>+${scoring.champion_bonus}pt</strong>&nbsp;Champion</span>`;
+
+  const bar = document.getElementById('payout-bar');
+  const p = scoring.payout;
+  bar.innerHTML = `
+    <span><span class="dot dot-gold"></span> 1st: ${p['1st']}</span>
+    <span><span class="dot dot-silver"></span> 2nd: ${p['2nd']}</span>
+    <span><span class="dot dot-bronze"></span> 3rd: ${p['3rd']}</span>
+  `;
+}
+
+function renderStandings(data) {
   const el = document.getElementById('content');
-  if (!entries || entries.count === 0) {
+  const updated = document.getElementById('updated');
+
+  if (!data || !data.standings || data.standings.length === 0) {
     el.innerHTML = '<p class="no-results">No entries yet. Check back once brackets are submitted!</p>';
     return;
   }
 
-  const total = entries.count;
-  const topChamp = stats?.champion_picks?.[0] || ['—', 0];
-  const topChampPct = total > 0 ? Math.round(topChamp[1] / total * 100) : 0;
-  const uniqueChamps = stats?.champion_picks?.length || 0;
+  updated.textContent = data.results_through
+    ? `Results through: ${data.results_through} \u00b7 Updated: ${data.last_updated}`
+    : `Updated: ${data.last_updated} \u00b7 No results yet`;
 
-  el.innerHTML = `
-    <div class="dash">
-      <!-- Big number cards -->
-      <div class="card" style="text-align:center;">
-        <h3>Brackets Submitted</h3>
-        <div class="big-num">${total}</div>
-        <div class="big-label">${stats?.paid || 0} paid / ${stats?.unpaid || 0} unpaid</div>
-      </div>
-      <div class="card" style="text-align:center;">
-        <h3>Favorite Champion</h3>
-        <div class="big-num" style="font-size:2.4em;">${topChamp[0]}</div>
-        <div class="big-label">${topChampPct}% of picks</div>
-      </div>
-      <div class="card" style="text-align:center;">
-        <h3>Unique Champion Picks</h3>
-        <div class="big-num">${uniqueChamps}</div>
-        <div class="big-label">different teams chosen</div>
-      </div>
+  renderScoring(data.scoring);
 
-      <!-- Donut chart: champion distribution -->
-      <div class="card">
-        <h3>Champion Distribution</h3>
-        <div id="donut-chart"></div>
-      </div>
+  const rounds = ['R32', 'R16', 'QF', 'SF', 'Final'];
+  let html = `<table>
+    <thead><tr>
+      <th class="num">#</th>
+      <th>Name</th>
+      ${rounds.map(r => `<th class="num">${r}</th>`).join('')}
+      <th class="num">Champ</th>
+      <th class="num">Total</th>
+    </tr></thead><tbody>`;
 
-      <!-- Survival chart: how top picks fare through rounds -->
-      <div class="card dash-2col">
-        <h3>Top Picks Survival Through Rounds</h3>
-        <div id="survival-chart"></div>
-      </div>
-
-      <!-- Round diversity bar chart -->
-      <div class="card dash-wide">
-        <h3>Teams Remaining by Round (Diversity)</h3>
-        <div id="diversity-chart"></div>
-      </div>
-
-      <!-- Entries table -->
-      <div class="card dash-wide">
-        <h3>All Entries (click to view picks)</h3>
-        <table>
-          <thead><tr><th class="num">#</th><th>Nickname</th><th>Champion Pick</th><th>Status</th></tr></thead>
-          <tbody id="entries-body"></tbody>
-        </table>
-      </div>
-    </div>
-  `;
-
-  const tbody = document.getElementById('entries-body');
-  entries.entries.forEach((e, i) => {
-    const status = e.paid ? '<span style="color:'+ACCENT+'">Paid</span>' : '<span style="color:'+MUTED+'">Unpaid</span>';
-    const tr = document.createElement('tr');
-    tr.className = 'clickable';
-    tr.innerHTML = `<td class="num">${i+1}</td><td>${e.nickname}</td><td>${e.champion || '—'}</td><td>${status}</td>`;
-    tr.addEventListener('click', () => showEntryModal(e.id, e.nickname));
-    tbody.appendChild(tr);
+  data.standings.forEach((s, i) => {
+    const rankClass = s.rank <= 3 ? ` rank-${s.rank}` : '';
+    const displayName = s.nickname || s.name;
+    const typeTag = s.entry_type === 'group-stage'
+      ? '<span class="entry-type-tag gs">GS</span>'
+      : '<span class="entry-type-tag t32">32</span>';
+    html += `<tr class="expandable${rankClass}" data-idx="${i}">
+      <td class="num">${s.rank}</td>
+      <td>${displayName}${typeTag}<span class="champ-pick">Champion: ${s.champion_pick || '?'}</span></td>
+      ${rounds.map(r => {
+        const b = s.breakdown[r] || { points: 0, correct: 0, possible: 0 };
+        return `<td class="num">${b.points}</td>`;
+      }).join('')}
+      <td class="num">${s.champion_bonus}</td>
+      <td class="num"><strong>${s.total}</strong></td>
+    </tr>
+    <tr class="detail-row" data-idx="${i}">
+      <td colspan="${rounds.length + 3}">
+        ${rounds.map(r => {
+          const b = s.breakdown[r] || { correct: 0, possible: 0, points: 0 };
+          return b.possible > 0
+            ? `${r}: ${b.correct}/${b.possible} correct (${b.points} pts)`
+            : `${r}: pending`;
+        }).join(' &middot; ')}
+      </td>
+    </tr>`;
   });
 
-  // --- D3 CHARTS ---
+  html += '</tbody></table>';
+  el.innerHTML = html;
 
-  // 1. DONUT CHART — champion picks
-  if (stats?.champion_picks?.length > 0) {
-    drawDonut(stats.champion_picks, total);
-  }
-
-  // 2. SURVIVAL AREA CHART — top champion picks through rounds
-  if (stats?.survival && Object.keys(stats.survival).length > 0) {
-    drawSurvival(stats.survival, total);
-  }
-
-  // 3. DIVERSITY BAR CHART — unique teams per round
-  if (stats?.round_diversity) {
-    drawDiversity(stats.round_diversity);
-  }
-}
-
-function drawDonut(champData, total) {
-  const w = 260, h = 260, radius = Math.min(w,h)/2 - 10;
-  const svg = d3.select('#donut-chart').append('svg')
-    .attr('viewBox', `0 0 ${w} ${h}`)
-    .style('width','100%').style('max-width','280px').style('display','block').style('margin','0 auto')
-    .append('g').attr('transform', `translate(${w/2},${h/2})`);
-
-  const colors = d3.scaleOrdinal()
-    .domain(champData.map(d => d[0]))
-    .range(['#1a5f2a','#d4a937','#b87333','#4caf50','#81c784','#a5d6a7','#c8e6c9','#e8f5e9','#999','#ccc']);
-
-  const pie = d3.pie().value(d => d[1]).sort(null);
-  const arc = d3.arc().innerRadius(radius * 0.55).outerRadius(radius);
-  const arcHover = d3.arc().innerRadius(radius * 0.55).outerRadius(radius + 6);
-
-  const slices = svg.selectAll('path').data(pie(champData)).join('path')
-    .attr('d', arc)
-    .attr('fill', d => colors(d.data[0]))
-    .attr('stroke', '#fff').attr('stroke-width', 2)
-    .style('cursor','pointer')
-    .on('mouseover', function(e,d) {
-      d3.select(this).transition().duration(150).attr('d', arcHover);
-      label.text(`${d.data[0]}: ${d.data[1]} (${Math.round(d.data[1]/total*100)}%)`);
-    })
-    .on('mouseout', function(e,d) {
-      d3.select(this).transition().duration(150).attr('d', arc);
-      label.text(`${total} brackets`);
+  // Expand/collapse
+  document.querySelectorAll('.expandable').forEach(row => {
+    row.addEventListener('click', () => {
+      const idx = row.dataset.idx;
+      row.classList.toggle('open');
+      document.querySelector(`.detail-row[data-idx="${idx}"]`).classList.toggle('open');
     });
-
-  const label = svg.append('text')
-    .attr('text-anchor','middle').attr('dy','0.35em')
-    .attr('font-size','13').attr('font-family','Arial, sans-serif').attr('fill','#333')
-    .text(`${total} brackets`);
-}
-
-function drawSurvival(survival, total) {
-  const teams = Object.keys(survival);
-  const rounds = ['R32','R16','QF','SF','Final','Champion'];
-  const margin = {top:20,right:120,bottom:30,left:40};
-  const w = 600, h = 240;
-  const innerW = w - margin.left - margin.right;
-  const innerH = h - margin.top - margin.bottom;
-
-  const svg = d3.select('#survival-chart').append('svg')
-    .attr('viewBox', `0 0 ${w} ${h}`)
-    .style('width','100%')
-    .append('g').attr('transform', `translate(${margin.left},${margin.top})`);
-
-  const x = d3.scalePoint().domain(rounds).range([0, innerW]);
-  const y = d3.scaleLinear().domain([0, total]).range([innerH, 0]);
-  const color = d3.scaleOrdinal().domain(teams)
-    .range(['#1a5f2a','#d4a937','#b87333','#4caf50','#2196f3','#ff5722','#9c27b0','#607d8b']);
-
-  // Axes
-  svg.append('g').attr('transform', `translate(0,${innerH})`)
-    .call(d3.axisBottom(x)).selectAll('text').attr('font-size','10');
-  svg.append('g').call(d3.axisLeft(y).ticks(5))
-    .selectAll('text').attr('font-size','10');
-
-  // Lines
-  const line = d3.line()
-    .x(d => x(d.round))
-    .y(d => y(d.count))
-    .curve(d3.curveMonotoneX);
-
-  teams.forEach(team => {
-    const data = rounds.map(r => ({round: r, count: survival[team][r] || 0}));
-
-    svg.append('path')
-      .datum(data)
-      .attr('fill', 'none')
-      .attr('stroke', color(team))
-      .attr('stroke-width', 2.5)
-      .attr('d', line);
-
-    // Dots
-    svg.selectAll(`.dot-${team.replace(/\s/g,'')}`).data(data).join('circle')
-      .attr('cx', d => x(d.round))
-      .attr('cy', d => y(d.count))
-      .attr('r', 4)
-      .attr('fill', color(team));
-
-    // Label at end
-    const last = data[data.length - 1];
-    svg.append('text')
-      .attr('x', x(last.round) + 8)
-      .attr('y', y(last.count) + 4)
-      .attr('font-size', '10')
-      .attr('font-family', 'Arial, sans-serif')
-      .attr('fill', color(team))
-      .attr('font-weight', 'bold')
-      .text(team);
   });
 }
 
-function drawDiversity(diversity) {
-  const rounds = ['R32','R16','QF','SF','Final'];
-  const data = rounds.map(r => ({round: r, count: diversity[r] || 0}));
-  const margin = {top:10,right:20,bottom:30,left:40};
-  const w = 900, h = 160;
-  const innerW = w - margin.left - margin.right;
-  const innerH = h - margin.top - margin.bottom;
-
-  const svg = d3.select('#diversity-chart').append('svg')
-    .attr('viewBox', `0 0 ${w} ${h}`)
-    .style('width','100%')
-    .append('g').attr('transform', `translate(${margin.left},${margin.top})`);
-
-  const x = d3.scaleBand().domain(rounds).range([0, innerW]).padding(0.35);
-  const y = d3.scaleLinear().domain([0, d3.max(data, d => d.count) * 1.15]).range([innerH, 0]);
-
-  svg.append('g').attr('transform', `translate(0,${innerH})`)
-    .call(d3.axisBottom(x)).selectAll('text').attr('font-size','11');
-  svg.append('g').call(d3.axisLeft(y).ticks(5))
-    .selectAll('text').attr('font-size','10');
-
-  // Bars with gradient coloring
-  svg.selectAll('rect').data(data).join('rect')
-    .attr('x', d => x(d.round))
-    .attr('y', d => y(d.count))
-    .attr('width', x.bandwidth())
-    .attr('height', d => innerH - y(d.count))
-    .attr('rx', 4)
-    .attr('fill', (d,i) => ROUND_COLORS[i]);
-
-  // Value labels on bars
-  svg.selectAll('.bar-label').data(data).join('text')
-    .attr('x', d => x(d.round) + x.bandwidth()/2)
-    .attr('y', d => y(d.count) - 5)
-    .attr('text-anchor', 'middle')
-    .attr('font-size', '12')
-    .attr('font-weight', 'bold')
-    .attr('fill', '#333')
-    .text(d => d.count);
-}
-
-function isTeamPicked(team, entry) {
-  if (entry.champion === team) return true;
-  for (const round of ['R32','R16','QF','SF','Final']) {
-    const picks = entry.picks?.[round] || {};
-    if (Object.values(picks).includes(team)) return true;
-  }
-  return false;
-}
-
-function getR32Team(matchId, structure, posteams, byefill) {
-  // For R32 matches, return the top team (the likely winner to advance)
-  const match = structure.matches[matchId];
-  if (!match || match.round !== 'R32') return null;
-  const topLabel = match.top;
-  if (topLabel && posteams[topLabel]) return posteams[topLabel];
-  return null;
-}
-
-async function showEntryModal(entryId, nickname) {
-  const resp = await fetch(`/worldcup/api/entry/${entryId}`);
-  if (!resp.ok) return;
-  const entry = await resp.json();
-
-  const overlay = document.createElement('div');
-  overlay.className = 'modal-overlay';
-  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
-
-  overlay.innerHTML = `
-    <div class="modal">
-      <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">&times;</button>
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
-        <h2 style="margin:0;">${entry.nickname}'s Bracket</h2>
-        <span class="champ-badge" style="margin:0;">Champion: ${entry.champion}</span>
-      </div>
-      <div id="modal-bracket" style="width:100%;overflow-x:auto;"></div>
-      <div style="margin-top:8px;font-size:0.75em;color:var(--muted);">
-        ID: ${entry.id} &middot; Submitted: ${entry.submitted}
-      </div>
-    </div>
-  `;
-  document.body.appendChild(overlay);
-
-  // Render a mini bracket with picks filled in
-  const { BracketRenderer } = await import('/worldcup/js/alt-bracket-renderer.js');
-  const container = document.getElementById('modal-bracket');
-  const renderer = new BracketRenderer(container);
-  await renderer.load('/worldcup/data/bracket-structure.json');
-  renderer.render();
-
-  const structure = renderer.structure;
-  const rounds = ['R32','R16','QF','SF','Final'];
-
-  // Fill champion
-  if (entry.champion) {
-    renderer.setSlotText('champion', 'pick', entry.champion);
-    renderer.setSlotFilled('champion', 'pick', true);
-  }
-
-  // Fill ALL R32 teams (winners highlighted, losers shown in white)
-  const POSITION_TEAMS = {
-    '1A':'Mexico','2A':'South Korea','1B':'Canada','2B':'Switzerland',
-    '1C':'Brazil','2C':'Morocco','1D':'USA','2D':'Paraguay',
-    '1E':'Germany','2E':'Ecuador','1F':'Netherlands','2F':'Japan',
-    '1G':'Belgium','2G':'Iran','1H':'Spain','2H':'Uruguay',
-    '1I':'France','2I':'Senegal','1J':'Argentina','2J':'Austria',
-    '1K':'Portugal','2K':'Colombia','1L':'England','2L':'Croatia',
-  };
-  const BYE_FILL = {
-    'M74':'Ivory Coast','M77':'Norway','M81':'Australia','M82':'Egypt',
-    'M79':'Scotland','M80':'Panama','M85':'Qatar','M87':'Uzbekistan',
-  };
-  const r32Ids = [...(structure.left_r32_order||[]), ...(structure.right_r32_order||[])];
-  for (const matchId of r32Ids) {
-    const match = structure.matches[matchId];
-    for (const pos of ['top','bot']) {
-      const label = match[pos];
-      let team = null;
-      if (label && POSITION_TEAMS[label]) {
-        team = POSITION_TEAMS[label];
-      } else if (!label && BYE_FILL[matchId] && pos === 'bot') {
-        team = BYE_FILL[matchId];
-      }
-      if (team) {
-        renderer.setSlotText(matchId, pos, team);
-        // Only highlight green if this team was picked to advance
-        // Check if this team appears in any later round pick
-        const isPicked = isTeamPicked(team, entry);
-        if (isPicked) {
-          renderer.setSlotFilled(matchId, pos, true);
-        }
-      }
-    }
-  }
-
-  // For later rounds, fill in BOTH slots (winner + loser) for each match
-  // The winner is stored in picks. The loser is the other team from the feeder matches.
-  for (const round of ['R16','QF','SF','Final']) {
-    for (const [matchId, match] of Object.entries(structure.matches)) {
-      if (match.round !== round || !match.from) continue;
-      const winner = entry.picks?.[round]?.[matchId];
-      if (!winner) continue;
-
-      // Find the other candidate (the loser) from feeder matches
-      const feeders = match.from;
-      // top comes from feeders[0], bot from feeders[1]
-      // The winner occupies one slot; fill the other with the losing team
-      const topFeeder = feeders[0];
-      const botFeeder = feeders[1];
-
-      // Get who won from each feeder (stored as top pick in the previous round)
-      const prevRound = rounds[rounds.indexOf(round) - 1];
-      const topCandidate = entry.picks?.[prevRound]?.[topFeeder] || getR32Team(topFeeder, structure, POSITION_TEAMS, BYE_FILL);
-      const botCandidate = entry.picks?.[prevRound]?.[botFeeder] || getR32Team(botFeeder, structure, POSITION_TEAMS, BYE_FILL);
-
-      if (topCandidate) {
-        renderer.setSlotText(matchId, 'top', topCandidate);
-        if (topCandidate === winner) renderer.setSlotFilled(matchId, 'top', true);
-      }
-      if (botCandidate) {
-        renderer.setSlotText(matchId, 'bot', botCandidate);
-        if (botCandidate === winner) renderer.setSlotFilled(matchId, 'bot', true);
-      }
-    }
-  }
-
-  // Fill Final (M103) top/bot from SF winners
-  const sfWinners = entry.picks?.['SF'] || {};
-  const m103 = structure.matches['M103'];
-  if (m103?.from) {
-    const topSF = sfWinners[m103.from[0]];
-    const botSF = sfWinners[m103.from[1]];
-    if (topSF) {
-      renderer.setSlotText('M103', 'top', topSF);
-      if (topSF === entry.champion) renderer.setSlotFilled('M103', 'top', true);
-    }
-    if (botSF) {
-      renderer.setSlotText('M103', 'bot', botSF);
-      if (botSF === entry.champion) renderer.setSlotFilled('M103', 'bot', true);
-    }
-  }
-}
-
-// Boot
-Promise.all([loadEntries(), loadStats()]).then(([entries, stats]) => {
-  renderDashboard(entries, stats);
-});
+loadStandings().then(renderStandings);
 </script>
 </body>
 </html>
