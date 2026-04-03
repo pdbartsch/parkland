@@ -81,6 +81,7 @@ async function init() {
   // Wire up action buttons
   document.getElementById('btn-export').addEventListener('click', exportPicks);
   document.getElementById('btn-clear').addEventListener('click', clearAll);
+  document.getElementById('btn-reset').addEventListener('click', clearAll);
   document.getElementById('name-input').addEventListener('input', updateSubmitButton);
   document.getElementById('nickname-input').addEventListener('input', updateSubmitButton);
 

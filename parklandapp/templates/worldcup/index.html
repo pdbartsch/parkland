@@ -187,7 +187,7 @@
 <script>
 async function loadStandings() {
   try {
-    const resp = await fetch('api/standings');
+    const resp = await fetch('/worldcup/api/standings');
     if (!resp.ok) throw new Error('No standings yet');
     return await resp.json();
   } catch {
