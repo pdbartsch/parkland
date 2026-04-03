@@ -76,8 +76,8 @@ def entry():
     return render_template("worldcup/quick-entry.html")
 
 
-@worldcup.route("/worldcup/alt-entry")
-def alt_entry():
+@worldcup.route("/worldcup/group")
+def group_entry():
     return render_template("worldcup/alt-entry.html")
 
 

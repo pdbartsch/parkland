@@ -4,18 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Group Stage Entry — 2026 World Cup Pool</title>
-<link rel="stylesheet" href="css/bracket.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='worldcup/css/bracket.css') }}">
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 </head>
 <body>
 
 <nav>
   <span class="logo">World Cup 2026</span>
-  <a href="index.html">Leaderboard</a>
-  <a href="entry.html">Fill Bracket</a>
-  <a href="alt-entry.html" class="active">Group Stage Entry</a>
-  <a href="admin.html">Admin</a>
-  <a href="analysis.html">Analysis</a>
+  <a href="{{ url_for('worldcup.index') }}">Dashboard</a>
+  <a href="{{ url_for('worldcup.entry') }}">32 Team Bracket</a>
+  <a href="{{ url_for('worldcup.group_entry') }}" class="active">Group Stage Bracket</a>
+  <a href="{{ url_for('worldcup.admin') }}">Admin</a>
 </nav>
 
 <!-- Access gate -->
