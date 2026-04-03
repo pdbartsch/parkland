@@ -110,6 +110,48 @@ def serve_data(filename):
 
 # --- API routes ---
 
+SCORING = {
+    "points_per_round": {"R32": 1, "R16": 2, "QF": 4, "SF": 8, "Final": 16},
+    "champion_bonus": 10,
+    "payout": {"1st": "60%", "2nd": "25%", "3rd": "15%"},
+}
+ROUNDS = ["R32", "R16", "QF", "SF", "Final"]
+
+
+@worldcup.route("/worldcup/api/standings", methods=["GET"])
+def api_standings():
+    """Generate standings from Datastore entries. Pre-tournament: all scores 0."""
+    entries = _all_entries()
+
+    standings = []
+    for e in entries:
+        entry_type = "group-stage" if e.get("group_rankings") else "32-team"
+        standings.append({
+            "name": e.get("nickname", e.get("name", "")),
+            "nickname": e.get("nickname", e.get("name", "")),
+            "entry_type": entry_type,
+            "total": 0,
+            "champion_bonus": 0,
+            "champion_pick": e.get("champion", ""),
+            "breakdown": {r: {"correct": 0, "possible": 0, "points": 0} for r in ROUNDS},
+            "rank": 1,
+        })
+
+    # Sort by total (all 0 for now), then alphabetically
+    standings.sort(key=lambda s: (-s["total"], s["nickname"].lower()))
+    for i, s in enumerate(standings):
+        if i > 0 and s["total"] == standings[i - 1]["total"]:
+            s["rank"] = standings[i - 1]["rank"]
+        else:
+            s["rank"] = i + 1
+
+    return jsonify({
+        "last_updated": datetime.utcnow().strftime("%Y-%m-%d %H:%M"),
+        "results_through": "",
+        "scoring": SCORING,
+        "standings": standings,
+    })
+
 @worldcup.route("/worldcup/api/submit", methods=["POST"])
 def submit_entry():
     """Accept a bracket entry submission."""
